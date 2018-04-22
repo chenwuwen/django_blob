@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="renderer" content="webkit"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    {#    <meta http-equiv="refresh" content="100000;url=#loginForm">#}
+    <meta name="description" content="Plane UI"/>
+    <meta name="keywords" content="Plane UI"/>
+    <title>Login - Admin example - Plane UI</title>
+
+    <link rel="icon" type="image/png" href="../favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/static/planeui/css/planeui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/login.css"/>
+</head>
+<body>
+
+<a name="top"></a>
+<div class="pui-layout pui-flexbox pui-flex-column login-layout">
+    <div class="pui-layout pui-flex login-main">
+        <div class="pui-layout pui-layout-fixed pui-layout-fixed-1200 login-main-con">
+            <div class="login-panel">
+                {#登陆form表单#}
+                <form id="loginForm" class="pui-form login-form" action="/user/login/" method="post">
+                    {% csrf_token %}
+                    <div class="pui-form-group">
+                        <h1 class="pui-text-white pui-text-normal">
+                            <i class="planeui-logo-2x pui-text-xxxxxl"></i> 登录 Login
+                        </h1>
+                        <div role="username">
+                            <input type="text" name="username" maxlength="16" class="pui-unbordered" placeholder="用户名"/>
+                            <i class="fa fa-user pui-text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <div role="password">
+                            <input type="password" name="password" maxlength="16" class="pui-unbordered"
+                                   placeholder="密码"/>
+                            <i class="fa fa-lock pui-text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <div role="vcode">
+                            <input type="text" name="vcode" maxlength="4" class="pui-unbordered " placeholder="验证码"/>
+                            <i class="fa fa-shield pui-text-blue"></i>
+                            <img src="/user/check_code" id="vcode-img"
+                                 onclick="this.src='/user/check_code?'+Math.random()+new Date()"/>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <input type="submit" name="submit"
+                               class="pui-btn pui-btn-default pui-bg-blue-800 pui-unbordered" value="登录"/>
+                        {#                        <span><a href="#" class="pui-text-white pui-text-xs">忘记密码？</a></span>#}
+                        <span><a href="#registerForm" class="pui-text-white pui-text-xs">还没有账号？</a></span>
+                    </div>
+                </form>
+                {#注册form表单#}
+                <form id="registerForm" class="pui-form login-form" action="/user/register/" method="post">
+                    {% csrf_token %}
+                    <div class="pui-form-group">
+                        <h1 class="pui-text-white pui-text-normal">
+                            <i class="planeui-logo-2x pui-text-xxxxxl"></i> 注册 Register
+                        </h1>
+                        <div role="username">
+                            <input type="text" name="username" maxlength="16" class="pui-unbordered" placeholder="用户名"/>
+                            <i class="fa fa-user pui-text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <div role="password">
+                            <input type="password" name="password" maxlength="16" class="pui-unbordered"
+                                   placeholder="密码"/>
+                            <i class="fa fa-lock pui-text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <div role="password">
+                            <input type="password" name="secondpassword" maxlength="16" class="pui-unbordered"
+                                   placeholder="重复密码"/>
+                            <i class="fa fa-lock pui-text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <div role="email">
+                            <input type="email" name="email" class="pui-unbordered"
+                                   placeholder="邮箱"/>
+                            <i class="fa fa-envelope pui-text-blue"></i>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <div role="vcode">
+                            <input type="text" name="vcode" maxlength="4" class="pui-unbordered " placeholder="验证码"/>
+                            <i class="fa fa-shield pui-text-blue"></i>
+                            <img src="/user/check_code" id="vcode-img"
+                                 onclick="this.src='/user/check_code?'+Math.random()+new Date()"/>
+                        </div>
+                    </div>
+                    <div class="pui-form-group">
+                        <input type="submit" name="submit"
+                               class="pui-btn pui-btn-default pui-bg-blue-800 pui-unbordered" value="注册"/>
+                        <span><a href="#loginForm" class="pui-text-white pui-text-xs">已有账号，去登陆！</a></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer class="pui-layout pui-layout-fixed pui-layout-fixed-1200 login-footer">
+        <div class="copyright">
+            <p>Copyright &copy; 2014-2015 <a href="https://github.com/pandao/planeui" class="pui-link" title="Plane UI"
+                                             target="_blank">Plane UI</a> All Rights Reserved.</p>
+            <p>Powered by <a href="https://github.com/pandao/planeui" class="pui-link" target="_blank">Plane UI</a>, <a
+                    href="https://github.com/pandao/planeui/blob/master/LICENSE" target="_blank"
+                    class="pui-link">MIT</a> License.
+                <small class="pui-right">代码如诗。</small>
+            </p>
+        </div>
+    </footer>
+</div>
+
+<script type="text/javascript" src="/static/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/planeui/js/planeui.js"></script>
+
+<script type="text/javascript">
+    var csrftoken = $.cookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    {#        一个html页面可能有多个ajax请求，比如有登录的有注册的，下面这几行代码的作用就是给每个ajax请求都绑定了csrf功能，不然的话，需要在每个ajax请求里单独配置csrf功能。#}
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $(".pui-text-xs").on('click', function () {
+
+    })
+    $(function () {
+        window.location.href = '#loginForm'
+    })
+</script>
+</body>
+</html>
