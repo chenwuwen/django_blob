@@ -1,6 +1,5 @@
 # -*-coding:utf-8-*-
 '''
-http://www.cnblogs.com/wupeiqi/articles/6216618.html
 http://www.cnblogs.com/wupeiqi/articles/6229414.html
 http://www.cnblogs.com/wupeiqi/articles/6144178.html
 '''
@@ -99,3 +98,27 @@ class LoginForm(forms.Form):
         #             self.add_error("__all__", ValidationError('用户名或密码错误...'))
         #     else:
         #         self.add_error(None, ValidationError('验证码错误...'))
+
+
+# 注册验证form
+class RegisterForm(forms.Form):
+    username = fields.CharField(required=True, error_messages={'required': '用户名不能为空'})
+    password = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
+    email = fields.EmailField(required=True, error_messages={'required': '密码不能为空', 'invalid': '邮箱格式错误'})
+    vcode = fields.CharField(required=True, error_messages={'required': '验证码不能为空'})
+
+    def clean(self):
+        v0 = self.cleaned_data['vcode']
+        v1 = self.cleaned_data['password']
+        v3 = self.cleaned_data['email']
+
+        # if v0==self.request.session('vcode').lower():
+        if v0:
+            self.cleaned_data.pop('vcode')
+            print(self.cleaned_data)
+            # user = User(**self.cleaned_data)
+            # user.save()
+            User.objects.create(**self.cleaned_data)
+        else:
+            raise ValidationError('验证码错误')
+        return self.cleaned_data

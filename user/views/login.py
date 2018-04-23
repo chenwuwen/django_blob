@@ -1,10 +1,12 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 # Create your views here.
 from django.views import View
 
-from user.validform import LoginForm
+from user.validform import LoginForm, RegisterForm
 
 
 def test(request):
@@ -20,6 +22,7 @@ def test(request):
 '''
 
 
+# 登录
 class Login(View):  # 这里需要注意，使用CBV必须继承View类
     def dispatch(self, request, *args, **kwargs):
         # 调用父类中的dispatch
@@ -53,6 +56,24 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
         else:  # result.errors，获取错误信息
             print(result.errors)
             return render(request, "login.html", {'err': result.errors})
+
+
+# 注册（返回统一为json，提示注册成功，重新登录）
+class Register(View):
+    def get(self, request):
+        return render(request, "login.html")
+
+    def post(self, request):
+        result = RegisterForm(request.POST)
+        ret = result.is_valid()
+        if ret:
+            result = {'state': 200}
+            return HttpResponse(json.dumps(result), content_type="application/json")
+        else:
+            # 错误返回json
+            print(result.errors)
+            error = result.errors.as_json()
+            return HttpResponse(error, content_type="application/json")
 
 
 # 验证Session是否存在的装饰器

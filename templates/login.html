@@ -40,6 +40,7 @@
                             <input type="password" name="password" maxlength="16" class="pui-unbordered"
                                    placeholder="密码"/>
                             <i class="fa fa-lock pui-text-blue"></i>
+{#                            <span type="empty" style="display: inline;"><i class="fa fa-close"></i> 错误：用户名不能为空。</span>#}
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -111,7 +112,7 @@
         <div class="copyright">
             <p>Copyright &copy; 2014-2015 <a href="https://github.com/pandao/planeui" class="pui-link" title="Plane UI"
                                              target="_blank">Plane UI</a> All Rights Reserved.</p>
-            <p>Powered by <a href="https://github.com/pandao/planeui" class="pui-link" target="_blank">Plane UI</a>, <a
+            <p>Powered by <a href="http://pandao.github.io/planeui/" class="pui-link" target="_blank">Plane UI</a>, <a
                     href="https://github.com/pandao/planeui/blob/master/LICENSE" target="_blank"
                     class="pui-link">MIT</a> License.
                 <small class="pui-right">代码如诗。</small>
@@ -145,6 +146,28 @@
     $(function () {
         window.location.href = '#loginForm'
     })
+
+    $("#registerForm").submit(function (e) {
+        e.preventDefault();
+         $.ajax({
+            //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "/user/register/" ,//url
+                data: $('#registerForm').serialize(),
+                success: function (result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                    if (result.state == 200) {
+                        alert("SUCCESS");
+                    }
+                    ;
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        })
+
 </script>
 </body>
 </html>
