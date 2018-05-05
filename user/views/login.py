@@ -1,12 +1,14 @@
 import json
 
+from astropy.utils import JsonCustomEncoder
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-
+from django.core.validators import ValidationError
 # Create your views here.
 from django.views import View
 
-from user.validform import LoginForm, RegisterForm
+from user.models import User
+from user.validform import RegisterForm, LoginForm
 
 
 def test(request):
@@ -53,9 +55,10 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             print("登陆成功，当前登陆人是：", user['username'])
             request.session['user'] = user
             return redirect("/blog/index/")
-        else:  # result.errors，获取错误信息
+        else:
+            # form.errors: 获取错误信息,表单的错误以字典形式返回(如果有多个错误, 可以循环这个字典, 然后传给前端)
             print(result.errors)
-            return render(request, "login.html", {'err': result.errors})
+            return render(request, "login.html", {'err': result})
 
 
 # 注册（返回统一为json，提示注册成功，重新登录）
@@ -73,8 +76,33 @@ class Register(View):
             # 错误返回json
             print(result.errors)
             error = result.errors.as_json()
+            # error = result.errors.as_data()
             return HttpResponse(error, content_type="application/json")
 
+
+# 验证用户名
+def valid_username(request):
+    result = {'status': True, 'error': None, 'data': None}
+    if request.method == 'GET':
+        username = request.GET.get('username')
+
+        users = User.objects.filter(username=username)
+        # https: // code.ziqiangxuetang.com / django / django - queryset - api.html
+        if not users.exists():
+            return
+        else:
+            result['status'] = False
+            result['error'] = 1
+            result['data'] = '用户名已存在'
+            return HttpResponse(json.dumps(result, cls=JsonCustomEncoder), content_type="application/json")
+
+
+# class JsonCustomEncoder(json.JSONEncoder):
+#     def default(self, field):
+#         if isinstance(field, ValidationError):
+#             return {'code': field.code, 'message': field.message}
+#         else:
+#             return json.JSONEncoder.default(self, field)
 
 # 验证Session是否存在的装饰器
 def auth(func):

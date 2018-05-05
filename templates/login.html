@@ -33,6 +33,8 @@
                         <div role="username">
                             <input type="text" name="username" maxlength="16" class="pui-unbordered" placeholder="用户名"/>
                             <i class="fa fa-user pui-text-blue"></i>
+                               <span type="empty" style="display: inline;"><i
+                                    class="fa fa-close"></i> {{ err.errors.username.0 }}</span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -40,7 +42,8 @@
                             <input type="password" name="password" maxlength="16" class="pui-unbordered"
                                    placeholder="密码"/>
                             <i class="fa fa-lock pui-text-blue"></i>
-{#                            <span type="empty" style="display: inline;"><i class="fa fa-close"></i> 错误：用户名不能为空。</span>#}
+                            <span type="empty" style="display: inline;"><i
+                                    class="fa fa-close"></i> {{ err.username.errors }}</span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -54,7 +57,6 @@
                     <div class="pui-form-group">
                         <input type="submit" name="submit"
                                class="pui-btn pui-btn-default pui-bg-blue-800 pui-unbordered" value="登录"/>
-                        {#                        <span><a href="#" class="pui-text-white pui-text-xs">忘记密码？</a></span>#}
                         <span><a href="#registerForm" class="pui-text-white pui-text-xs">还没有账号？</a></span>
                     </div>
                 </form>
@@ -149,25 +151,44 @@
 
     $("#registerForm").submit(function (e) {
         e.preventDefault();
-         $.ajax({
+        $.ajax({
             //几个参数需要注意一下
-                type: "POST",//方法类型
-                dataType: "json",//预期服务器返回的数据类型
-                url: "/user/register/" ,//url
-                data: $('#registerForm').serialize(),
-                success: function (result) {
-                    console.log(result);//打印服务端返回的数据(调试用)
-                    if (result.state == 200) {
-                        alert("SUCCESS");
-                    }
-                    ;
-                },
-                error : function() {
-                    alert("异常！");
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: "/user/register/",//url
+            data: $('#registerForm').serialize(),
+            success: function (result) {
+                console.log(result);//打印服务端返回的数据(调试用)
+                if (result.state == 200) {
+                    alert("SUCCESS");
                 }
-            });
-        })
+                ;
+            },
+            error: function () {
+                alert("异常！");
+            }
+        });
+    })
 
+    $("#registerForm input[name='username']").blur(function () {
+        var username = $("#registerForm input[name='username']").val()
+        $.ajax({
+            url: '/user/valid_username',
+            data: {'username': username},
+            type: 'get',
+            dataType: 'json',
+            success: function (data) {
+                if (data.status) {
+
+                } else {
+                    console.log(data.data)
+                }
+            },
+            error: function () {
+
+            }
+        })
+    })
 </script>
 </body>
 </html>
