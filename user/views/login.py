@@ -26,6 +26,10 @@ def test(request):
 
 # 登录
 class Login(View):  # 这里需要注意，使用CBV必须继承View类
+
+    # 定义返回值
+    res_ret = {'status': True, 'error': None, 'data': None}
+
     def dispatch(self, request, *args, **kwargs):
         # 调用父类中的dispatch
         print('before')  # 类似装饰器的功能,这个地方更像java servlet过滤器,但并不是,Django中的中间件更像是
@@ -37,9 +41,10 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
     def get(self, request):
         print(request)
         print(request.method)
-        return render(request, 'login.html', {})
+        return render(request, 'login.html')
 
     def post(self, request):
+
         result = LoginForm(request.POST)
 
         # 如果所有规则都满足，则ret为true，只要有一条不满足，ret就为false。
@@ -54,11 +59,19 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             # print("登陆成功，当前登陆人是：", user.__dict__['username'])
             print("登陆成功，当前登陆人是：", user['username'])
             request.session['user'] = user
-            return redirect("/blog/index/")
+            # return redirect("/blog/index/")
+            return HttpResponse(json.dumps(Login.res_ret), content_type="application/json")
         else:
             # form.errors: 获取错误信息,表单的错误以字典形式返回(如果有多个错误, 可以循环这个字典, 然后传给前端)
             print(result.errors)
-            return render(request, "login.html", {'err': result})
+            print(result.errors.as_json())
+            Login.res_ret['status'] = False
+            Login.res_ret['error'] = result.errors.as_json()
+            # return render(request, "login.html", {'err': result})
+            return HttpResponse(json.dumps(Login.res_ret, cls=JsonCustomEncoder), content_type="application/json")
+
+
+
 
 
 # 注册（返回统一为json，提示注册成功，重新登录）
@@ -92,8 +105,7 @@ def valid_username(request):
             return
         else:
             result['status'] = False
-            result['error'] = 1
-            result['data'] = '用户名已存在'
+            result['error'] = '用户名已存在'
             return HttpResponse(json.dumps(result, cls=JsonCustomEncoder), content_type="application/json")
 
 
