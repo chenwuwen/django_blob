@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/blog_view.css"/>
+{% endblock %}
+
+{% block main %}
+
+    <div class="pui-layout">
+        {% include 'component/header.html' %}
+        <div class="pui-container pui-layout-fixed pui-layout-fixed-1200 pui-grid blog-main">
+            <div class="pui-row">
+                {% include 'blog/blog_setting_slide.html' %}
+
+                <div class="pui-grid-xs-6 pui-grid-sm-8 pui-grid-md-9 pui-grid-lg-9 pui-grid-xl-9 pui-grid-xxl-9">
+
+                    <div class="pui-row pui-form-group pui-form-group-underline-dashed">
+                        <div class="pui-grid-sm-12 pui-grid-md-12">
+                            <input type="text" placeholder="请输入文章标题"/>
+                        </div>
+                    </div>
+                    <div class="pui-row pui-form-group">
+                        <div id="editor" class="pui-grid-sm-12 pui-grid-md-12">
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        {% include 'component/footer.html' %}
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="/static/wangEditor-3.1.1/release/wangEditor.js"></script>
+    <script type="text/javascript">
+        {#        初始化编辑器#}
+        var E = window.wangEditor
+        var editor = new E('#editor')
+        // 或者 var editor = new E( document.getElementById('editor') )
+        editor.create()
+    </script>
+{% endblock %}

@@ -15,8 +15,7 @@ Including another URLconf
 """
 from django.urls import path
 
-from blog.views import index
-from blog.views import blog
+from blog.views import index, blog
 
 urlpatterns = [
     path('index/', index.Index.as_view()),

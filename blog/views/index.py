@@ -9,6 +9,3 @@ class Index(View):
         return render(request, "index.html", {'user': user})
 
 
-class ReadBlog(View):
-    def get(self, request):
-        return render(request, "blog/view.html")
