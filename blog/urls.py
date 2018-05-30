@@ -16,9 +16,11 @@ Including another URLconf
 from django.urls import path
 
 from blog.views import index
+from blog.views import blog
 
 urlpatterns = [
     path('index/', index.Index.as_view()),
-    path('read_blog/', index.ReadBlog.as_view()),
+    path('read_blog/', blog.ReadBlog.as_view()),
+    path('write_blog/', blog.WriteBlog.as_view()),
 
 ]

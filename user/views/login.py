@@ -124,7 +124,7 @@ def auth(func):
     def inner(request, *args, **kwargs):
         user = request.session.get('user', None)
         if not user:
-            return redirect('/session_login/')
+            return redirect('/user/login')
         return func(request, *args, **kwargs)
 
     return inner
