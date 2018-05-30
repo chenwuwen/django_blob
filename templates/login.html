@@ -24,7 +24,7 @@
         <div class="pui-layout pui-layout-fixed pui-layout-fixed-1200 login-main-con">
             <div class="login-panel">
                 {#登陆form表单#}
-                <form id="loginForm" class="pui-form login-form" action="/user/login/" method="post">
+                <form id="loginForm" class="pui-form login-form" action="" method="post">
                     {% csrf_token %}
                     <div class="pui-form-group">
                         <h1 class="pui-text-white pui-text-normal">
@@ -33,8 +33,7 @@
                         <div role="username">
                             <input type="text" name="username" maxlength="16" class="pui-unbordered" placeholder="用户名"/>
                             <i class="fa fa-user pui-text-blue"></i>
-                               <span type="empty" style="display: inline;"><i
-                                    class="fa fa-close"></i> {{ err.errors.username.0 }}</span>
+                            <span fv-role="username"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -42,8 +41,7 @@
                             <input type="password" name="password" maxlength="16" class="pui-unbordered"
                                    placeholder="密码"/>
                             <i class="fa fa-lock pui-text-blue"></i>
-                            <span type="empty" style="display: inline;"><i
-                                    class="fa fa-close"></i> {{ err.username.errors }}</span>
+                            <span fv-role="password"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -52,16 +50,17 @@
                             <i class="fa fa-shield pui-text-blue"></i>
                             <img src="/user/check_code" id="vcode-img"
                                  onclick="this.src='/user/check_code?'+Math.random()+new Date()"/>
+                             <span fv-role="vcode"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
-                        <input type="submit" name="submit"
+                        <input type="submit" name="submit" id="loginForm_submit"
                                class="pui-btn pui-btn-default pui-bg-blue-800 pui-unbordered" value="登录"/>
                         <span><a href="#registerForm" class="pui-text-white pui-text-xs">还没有账号？</a></span>
                     </div>
                 </form>
                 {#注册form表单#}
-                <form id="registerForm" class="pui-form login-form" action="/user/register/" method="post">
+                <form id="registerForm" class="pui-form login-form" action="" method="post">
                     {% csrf_token %}
                     <div class="pui-form-group">
                         <h1 class="pui-text-white pui-text-normal">
@@ -70,6 +69,7 @@
                         <div role="username">
                             <input type="text" name="username" maxlength="16" class="pui-unbordered" placeholder="用户名"/>
                             <i class="fa fa-user pui-text-blue"></i>
+                             <span fv-role="username"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -77,13 +77,15 @@
                             <input type="password" name="password" maxlength="16" class="pui-unbordered"
                                    placeholder="密码"/>
                             <i class="fa fa-lock pui-text-blue"></i>
+                             <span fv-role="password"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
-                        <div role="password">
-                            <input type="password" name="secondpassword" maxlength="16" class="pui-unbordered"
+                        <div role="confirmPassword">
+                            <input type="password" name="confirmPassword" maxlength="16" class="pui-unbordered"
                                    placeholder="重复密码"/>
                             <i class="fa fa-lock pui-text-blue"></i>
+                             <span fv-role="confirmPassword"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -91,6 +93,7 @@
                             <input type="email" name="email" class="pui-unbordered"
                                    placeholder="邮箱"/>
                             <i class="fa fa-envelope pui-text-blue"></i>
+                             <span fv-role="email"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
@@ -99,10 +102,11 @@
                             <i class="fa fa-shield pui-text-blue"></i>
                             <img src="/user/check_code" id="vcode-img"
                                  onclick="this.src='/user/check_code?'+Math.random()+new Date()"/>
+                             <span fv-role="vcode"></span>
                         </div>
                     </div>
                     <div class="pui-form-group">
-                        <input type="submit" name="submit"
+                        <input type="submit" name="submit" id="registerForm_submit"
                                class="pui-btn pui-btn-default pui-bg-blue-800 pui-unbordered" value="注册"/>
                         <span><a href="#loginForm" class="pui-text-white pui-text-xs">已有账号，去登陆！</a></span>
                     </div>
@@ -126,6 +130,7 @@
 <script type="text/javascript" src="/static/jquery/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="/static/jquery/jquery.cookie.js"></script>
 <script type="text/javascript" src="/static/planeui/js/planeui.js"></script>
+<script type="text/javascript" src="/static/assets/js/login_validate.js"></script>
 
 <script type="text/javascript">
     var csrftoken = $.cookie('csrftoken');
@@ -151,72 +156,6 @@
     })
 
 
-       $("#loginForm").submit(function (e) {
-        e.preventDefault();
-        $.ajax({
-            //几个参数需要注意一下
-            type: "POST",//方法类型
-            dataType: "json",//预期服务器返回的数据类型
-            url: "/user/login/",//url
-            data: $('#loginForm').serialize(),
-            success: function (result) {
-                console.log(result);//打印服务端返回的数据(调试用)
-                if (result.status) {
-                    console.log("SUCCESS");
-                    location.href="/blog/index/"
-                }else{
-{#                    $.each(result.error,function(index, val) {#}
-{#                        console.log(index,":",val)#}
-{#                    });#}
-                }
-
-            },
-            error: function () {
-                alert("异常！");
-            }
-        });
-    })
-
-    $("#registerForm").submit(function (e) {
-        e.preventDefault();
-        $.ajax({
-            //几个参数需要注意一下
-            type: "POST",//方法类型
-            dataType: "json",//预期服务器返回的数据类型
-            url: "/user/register/",//url
-            data: $('#registerForm').serialize(),
-            success: function (result) {
-                console.log(result);//打印服务端返回的数据(调试用)
-                if (result.state == 200) {
-                    alert("SUCCESS");
-                }
-                ;
-            },
-            error: function () {
-                alert("异常！");
-            }
-        });
-    })
-
-    $("#registerForm input[name='username']").blur(function () {
-        var username = $("#registerForm input[name='username']").val()
-        $.ajax({
-            url: '/user/valid_username',
-            data: {'username': username},
-            type: 'get',
-            dataType: 'json',
-            success: function (data) {
-                if (data.status) {
-
-                } else {
-                    console.log(data.data)
-                }
-            },
-            error: function () {
-
-            }
-        })
-    })
 </script>
 </body>
 </html>

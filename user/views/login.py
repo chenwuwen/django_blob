@@ -2,7 +2,7 @@ import json
 
 from astropy.utils import JsonCustomEncoder
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.validators import ValidationError
 # Create your views here.
 from django.views import View
@@ -47,6 +47,8 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
 
         result = LoginForm(request.POST)
 
+        vcode = request.session['CheckCode']
+
         # 如果所有规则都满足，则ret为true，只要有一条不满足，ret就为false。
         ret = result.is_valid()
         # 在此我注释以下代码是因为我在from表单进行校验时,删除了数据中的 验证码的key，在此获取用户输入的信息的时候，会报找不到key的错误
@@ -54,7 +56,6 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
         # data = result.clean()
         # print(data)
         if ret:
-            # user = result.cleaned_data
             user = result.cleaned_data
             # print("登陆成功，当前登陆人是：", user.__dict__['username'])
             print("登陆成功，当前登陆人是：", user['username'])
@@ -63,6 +64,7 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             return HttpResponse(json.dumps(Login.res_ret), content_type="application/json")
         else:
             # form.errors: 获取错误信息,表单的错误以字典形式返回(如果有多个错误, 可以循环这个字典, 然后传给前端)
+            print(result)
             print(result.errors)
             print(result.errors.as_json())
             Login.res_ret['status'] = False
@@ -71,26 +73,27 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             return HttpResponse(json.dumps(Login.res_ret, cls=JsonCustomEncoder), content_type="application/json")
 
 
-
-
-
 # 注册（返回统一为json，提示注册成功，重新登录）
 class Register(View):
     def get(self, request):
         return render(request, "login.html")
 
     def post(self, request):
+        # 定义返回值
+        res_ret = {'status': True, 'error': None, 'data': None}
+
         result = RegisterForm(request.POST)
         ret = result.is_valid()
         if ret:
-            result = {'state': 200}
-            return HttpResponse(json.dumps(result), content_type="application/json")
+            return HttpResponse(json.dumps(res_ret), content_type="application/json")
         else:
             # 错误返回json
             print(result.errors)
             error = result.errors.as_json()
             # error = result.errors.as_data()
-            return HttpResponse(error, content_type="application/json")
+            res_ret['status'] = False
+            res_ret['error'] = error
+            return HttpResponse(json.dumps(res_ret), content_type="application/json")
 
 
 # 验证用户名
@@ -100,9 +103,9 @@ def valid_username(request):
         username = request.GET.get('username')
 
         users = User.objects.filter(username=username)
-        # https: // code.ziqiangxuetang.com / django / django - queryset - api.html
+        # https://code.ziqiangxuetang.com/django/django-queryset-api.html
         if not users.exists():
-            return
+            return HttpResponse(json.dumps(result, cls=JsonCustomEncoder), content_type="application/json")
         else:
             result['status'] = False
             result['error'] = '用户名已存在'
@@ -129,7 +132,7 @@ def auth(func):
 
 # 注销
 @auth
-def session_logout(request):
+def logout(request):
     # 删除session
     del request.session['user']
-    return redirect('/session_login/')
+    return redirect('/user/login/')

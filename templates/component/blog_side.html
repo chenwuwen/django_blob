@@ -130,7 +130,8 @@
                                 class="fa fa-user pui-text-teal"></i> {{ user.username }}</a>
                     </li>
                     <li>
-                        <a href="http://weibo.com/ipandao" target="_blank"><i
+{#                        此处注销的链接的url需要添加 /,表示将从根目录发起请求，如果不添加首个斜杠请求地址将变成当前地址+ href中的地址#}
+                        <a href="/user/logout"><i
                                 class="fa fa-sign-in pui-text-green"></i>注销</a>
                     </li>
                 {% else %}

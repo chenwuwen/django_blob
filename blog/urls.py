@@ -19,5 +19,6 @@ from blog.views import index
 
 urlpatterns = [
     path('index/', index.Index.as_view()),
+    path('read_blog/', index.ReadBlog.as_view()),
 
 ]

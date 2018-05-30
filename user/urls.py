@@ -20,6 +20,7 @@ from user.views import login
 
 urlpatterns = [
     path('login/', login.Login.as_view(), name='login'),
+    path('logout/', login.logout, name='logout'),
     path('register/', login.Register.as_view(), name='register'),
     path('check_code/', common.getCheckCode, name='check_code'),
     path('valid_username/', login.valid_username, name='valid_username'),

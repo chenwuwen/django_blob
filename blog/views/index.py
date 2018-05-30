@@ -7,3 +7,8 @@ class Index(View):
     def get(self, request):
         user = request.session['user']
         return render(request, "index.html", {'user': user})
+
+
+class ReadBlog(View):
+    def get(self, request):
+        return render(request, "blog/view.html")

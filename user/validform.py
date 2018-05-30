@@ -36,11 +36,10 @@ class LoginForm(forms.Form):
 
     # 自定义方法（全局钩子, 检验两个字段）
     def clean(self):
-        v0 = self.cleaned_data['vcode'].lower()
-        v0 = 1
+        # v0 = self.cleaned_data['vcode'].lower()
         # if v0 == self.request.session['CheckCode']:
         # print(type(self.cleaned_data))
-        if v0:
+        if 1:
             v1 = self.cleaned_data['username']
             v2 = self.cleaned_data['password']
             # 删除字典中vcode键,用以用户名密码在数据库查询
@@ -104,19 +103,20 @@ class LoginForm(forms.Form):
 class RegisterForm(forms.Form):
     username = fields.CharField(required=True, error_messages={'required': '用户名不能为空'})
     password = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
-    repeat_password = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
+    confirmPassword = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
     email = fields.EmailField(required=True, error_messages={'required': '密码不能为空', 'invalid': '邮箱格式错误'})
     vcode = fields.CharField(required=True, error_messages={'required': '验证码不能为空'})
 
     def clean(self):
         v0 = self.cleaned_data['vcode']
         v1 = self.cleaned_data['password']
-        v2 = self.cleaned_data['repeat_password']
+        v2 = self.cleaned_data['confirmPassword']
         v3 = self.cleaned_data['email']
 
         # if v0==self.request.session('vcode').lower():
         if v0:
             self.cleaned_data.pop('vcode')
+            self.cleaned_data.pop('confirmPassword')
             print(self.cleaned_data)
             if v1 == v2:
                 # user = User(**self.cleaned_data)
