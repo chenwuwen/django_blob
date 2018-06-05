@@ -7,6 +7,7 @@ from django.core.validators import ValidationError
 # Create your views here.
 from django.views import View
 
+from common.decorators import auth
 from user.models import User
 from user.validform import RegisterForm, LoginForm
 
@@ -119,15 +120,7 @@ def valid_username(request):
 #         else:
 #             return json.JSONEncoder.default(self, field)
 
-# 验证Session是否存在的装饰器
-def auth(func):
-    def inner(request, *args, **kwargs):
-        user = request.session.get('user', None)
-        if not user:
-            return redirect('/user/login')
-        return func(request, *args, **kwargs)
 
-    return inner
 
 
 # 注销

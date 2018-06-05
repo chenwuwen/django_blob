@@ -2,7 +2,8 @@
 from django.shortcuts import render
 from django.views import View
 
-from user.views.login import auth
+from blog.models import Blog
+from blog.validform import BlogForm
 
 
 class ReadBlog(View):
@@ -15,4 +16,8 @@ class WriteBlog(View):
         return render(request, "blog/write_blog.html")
 
     def post(self, request):
-        pass
+        result = BlogForm(request.POST)
+        ret = result.is_valid()
+        if ret:
+            blog = self.cleaned_data
+            Blog.objects.create(blog)

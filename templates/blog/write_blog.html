@@ -12,98 +12,98 @@
                 {% include 'blog/blog_setting_slide.html' %}
 
                 <div class="pui-grid-xs-6 pui-grid-sm-8 pui-grid-md-9 pui-grid-lg-9 pui-grid-xl-9 pui-grid-xxl-9">
-
-                    <div class="pui-row pui-form-group">
-                        <div class="pui-grid-sm-12 pui-grid-md-12">
-                            <input type="text" placeholder="请输入文章标题"/>
-                        </div>
-                    </div>
-                    <div class="pui-row pui-form-group">
-                        <div id="editor" class="pui-grid-sm-12 pui-grid-md-12">
-
-                        </div>
-                    </div>
-
-                    <div class="pui-row pui-form-group pui-form-group-underline-dashed">
-                        <label class="pui-grid-sm-12 pui-grid-md-1.5">文章标签：</label>
-                        <div class="pui-grid-sm-12 pui-grid-md-10">
-                            <input type="text" style="width:50%;">(多个关键字之间用“,”分隔，最多不超过10个)
-                        </div>
-                    </div>
-
-                    <div class="pui-row pui-form-group pui-form-group-underline-dashed">
-                        <label class="pui-grid-sm-12 pui-grid-md-1.5">个人分类：
-                            <span><i class="fa fa-plus-square-o fa-1x pui-text-blue-400">&nbsp;添加新的分类</i></span>
-                        </label>
-
-
-                        <div class="pui-grid-sm-12 pui-grid-md-8">
-                            <div class="pui-card pui-card-default pui-card-box">
-                                <pui-checkbox class="checked" name="option[]" value="选项一">选项一
-                                    <input type="checkbox"
-                                           name="option[]"
-                                           value="选项一"
-                                           checked="checked">
-                                </pui-checkbox>
-                                <pui-checkbox name="option[]" value="选项二">选项二
-                                    <input type="checkbox" name="option[]"
-                                           value="选项二"></pui-checkbox>
-                                <pui-checkbox name="option[]" value="选项三" disabled="">选项三
-                                    <input type="checkbox"
-                                           name="option[]"
-                                           value="选项三"
-                                           disabled="disabled">
-                                </pui-checkbox>
+                    <form class="pui-form pui-input-sm-large pui-input-md-large pui-grid" method="post" action="writer_blog">
+                        <div class="pui-row pui-form-group">
+                            <div class="pui-grid-sm-12 pui-grid-md-12">
+                                <input name="title" type="text" placeholder="请输入文章标题"/>
                             </div>
                         </div>
-                    </div>
+                        <div class="pui-row pui-form-group">
+                            <div id="editor" class="pui-grid-sm-12 pui-grid-md-12">
 
-                    <div class="pui-row pui-form-group pui-form-group-underline-dashed">
-                        <div class="pui-grid-sm-12 pui-grid-md-5">
-                            <label class="">文章类型：</label>
-                            <div class="pui-select">
-                                <select name="province">
-                                    <option value="">请选择文章类型</option>
-                                    <option value="浙江省">浙江省</option>
-                                    <option value="福建省">福建省</option>
-                                    <option value="广东省">广东省</option>
-                                </select>
                             </div>
                         </div>
-                        <div class="pui-grid-sm-12 pui-grid-md-5">
-                            <label class="">博客分类：</label>
-                            <div class="pui-select">
-                                <select name="province">
-                                    <option value="">请选择文章类型</option>
-                                    <option value="浙江省">浙江省</option>
-                                    <option value="福建省">福建省</option>
-                                    <option value="广东省">广东省</option>
-                                </select>
+
+                        <div class="pui-row pui-form-group pui-form-group-underline-dashed">
+                            <label class="pui-grid-sm-12 pui-grid-md-1.5">文章标签：</label>
+                            <div class="pui-grid-sm-12 pui-grid-md-10">
+                                <input name="" type="text" style="width:50%;">(多个关键字之间用“,”分隔，最多不超过10个)
                             </div>
                         </div>
-                    </div>
 
-                    <div class="pui-row pui-form-group pui-form-group-underline-dashed">
-                        <div class="pui-grid-sm-12 pui-grid-md-10">
-                            <label>私密文章：</label>
-                            <pui-switch-slide name="test-switch-slide" width="60" color="orange" on-color="green"
-                                              off-color="gray" class="pui-round pui-switch-slide-animation"
-                                              style="width: 64px; background-color: green; color: green;">
-                                <span change="关" class="">开</span>
-                                <input type="hidden" name="test-switch-slide" value="1"></pui-switch-slide>
+                        <div class="pui-row pui-form-group pui-form-group-underline-dashed">
+                            <label class="pui-grid-sm-12 pui-grid-md-1.5">个人分类：
+                                <span><i class="fa fa-plus-square-o fa-1x pui-text-blue-400">&nbsp;添加新的分类</i></span>
+                            </label>
+
+
+                            <div class="pui-grid-sm-12 pui-grid-md-8">
+                                <div class="pui-card pui-card-default pui-card-box">
+                                    <pui-checkbox class="checked" name="option[]" value="选项一">选项一
+                                        <input type="checkbox"
+                                               name="option[]"
+                                               value="选项一"
+                                               checked="checked">
+                                    </pui-checkbox>
+                                    <pui-checkbox name="option[]" value="选项二">选项二
+                                        <input type="checkbox" name="option[]"
+                                               value="选项二"></pui-checkbox>
+                                    <pui-checkbox name="option[]" value="选项三" disabled="">选项三
+                                        <input type="checkbox"
+                                               name="option[]"
+                                               value="选项三"
+                                               disabled="disabled">
+                                    </pui-checkbox>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="button" class="pui-btn pui-btn-default pui-btn-secondary">
-                        发布博客 <span class="arrow-down"></span>
-                    </button>
-                    <button type="button" class="pui-btn pui-btn-info ">
-                        保存草稿 <span class="arrow-down"></span>
-                    </button>
-                    <button type="button" class="pui-btn pui-btn-default pui-btn-large">
-                        返回 <span class="arrow-down"></span>
-                    </button>
+                        <div class="pui-row pui-form-group pui-form-group-underline-dashed">
+                            <div class="pui-grid-sm-12 pui-grid-md-5">
+                                <label class="">文章类型：</label>
+                                <div name="type" class="pui-select">
+                                    <select name="province">
+                                        <option value="">请选择文章类型</option>
+                                        <option value="浙江省">浙江省</option>
+                                        <option value="福建省">福建省</option>
+                                        <option value="广东省">广东省</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="pui-grid-sm-12 pui-grid-md-5">
+                                <label class="">博客分类：</label>
+                                <div class="pui-select">
+                                    <select name="classification" >
+                                        <option value="">请选择文章类型</option>
+                                        <option value="浙江省">浙江省</option>
+                                        <option value="福建省">福建省</option>
+                                        <option value="广东省">广东省</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="pui-row pui-form-group pui-form-group-underline-dashed">
+                            <div class="pui-grid-sm-12 pui-grid-md-10">
+                                <label>私密文章：</label>
+                                <pui-switch-slide name="test-switch-slide" width="60" color="orange" on-color="green"
+                                                  off-color="gray" class="pui-round pui-switch-slide-animation"
+                                                  style="width: 64px; background-color: green; color: green;">
+                                    <span change="关" class="">开</span>
+                                    <input type="hidden" name="test-switch-slide" value="1"></pui-switch-slide>
+                            </div>
+                        </div>
+
+                        <button type="button" class="pui-btn pui-btn-default pui-btn-secondary publish_blog">
+                            发布博客 <span class="arrow-down"></span>
+                        </button>
+                        <button type="button" class="pui-btn pui-btn-info ">
+                            保存草稿 <span class="arrow-down"></span>
+                        </button>
+                        <button type="button" class="pui-btn pui-btn-default pui-btn-large">
+                            返回 <span class="arrow-down"></span>
+                        </button>
+                    </form>
                 </div>
 
             </div>
@@ -121,5 +121,12 @@
         var editor = new E('#editor')
         // 或者 var editor = new E( document.getElementById('editor') )
         editor.create()
+
+
+        $(".publish_blog").on('click', function () {
+            layer.msg('请将内容填写完整')
+            var form = $("form")
+            form.submit;
+        })
     </script>
 {% endblock %}

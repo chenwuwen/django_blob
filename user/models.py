@@ -26,13 +26,13 @@ class User(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=50)
     age = models.PositiveSmallIntegerField(verbose_name="年龄", blank=True, null=True, default=0)
-    six_list = (
+    sex_list = (
         (1, "男"),
         (0, "女"),
     )
-    sex = models.IntegerField(choices=six_list, verbose_name="性别", blank=True, null=True)  # 以下拉框的形式在页面展示
+    sex = models.IntegerField(choices=sex_list, verbose_name="性别", blank=True, null=True)  # 以下拉框的形式在页面展示
     createDate = models.DateTimeField(auto_now_add=True, verbose_name="注册时间")
     email = models.EmailField(verbose_name="邮箱地址")
 
-    # def __str__(self):
-    #     return self.username
+    def __str__(self):
+        return self.username

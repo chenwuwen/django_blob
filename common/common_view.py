@@ -22,5 +22,5 @@ def getCheckCode(request):
     # 创建随机字符 code
     # 创建一张图片格式的字符串，将随机字符串写到图片上
     request.session['CheckCode'] = code.lower()
-    print('验证码是：',request.session['CheckCode'])
+    print('验证码是：', request.session['CheckCode'])
     return HttpResponse(stream.getvalue())
