@@ -4,9 +4,11 @@
 # @Last Modified by:   Marte
 # @Last Modified time: 2018-04-14 18:39:21
 
-import io, json, datetime
-from user.utils import check_code as CheckCode
+import io
+
 from django.shortcuts import HttpResponse
+
+from common.utils import check_code as CheckCode
 
 '''
 获取验证码
