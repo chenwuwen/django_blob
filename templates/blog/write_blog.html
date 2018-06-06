@@ -12,7 +12,8 @@
                 {% include 'blog/blog_setting_slide.html' %}
 
                 <div class="pui-grid-xs-6 pui-grid-sm-8 pui-grid-md-9 pui-grid-lg-9 pui-grid-xl-9 pui-grid-xxl-9">
-                    <form class="pui-form pui-input-sm-large pui-input-md-large pui-grid" method="post" action="writer_blog">
+                    <form class="pui-form pui-input-sm-large pui-input-md-large pui-grid" method="post"
+                          action="writer_blog">
                         <div class="pui-row pui-form-group">
                             <div class="pui-grid-sm-12 pui-grid-md-12">
                                 <input name="title" type="text" placeholder="请输入文章标题"/>
@@ -61,20 +62,20 @@
                         <div class="pui-row pui-form-group pui-form-group-underline-dashed">
                             <div class="pui-grid-sm-12 pui-grid-md-5">
                                 <label class="">文章类型：</label>
-                                <div name="type" class="pui-select">
-                                    <select name="province">
+                                <div class="pui-select">
+                                    <select name="type">
                                         <option value="">请选择文章类型</option>
-                                        <option value="浙江省">浙江省</option>
-                                        <option value="福建省">福建省</option>
-                                        <option value="广东省">广东省</option>
+                                        <option value="原创">原创</option>
+                                        <option value="转载">转载</option>
+                                        <option value="翻译">翻译</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="pui-grid-sm-12 pui-grid-md-5">
                                 <label class="">博客分类：</label>
                                 <div class="pui-select">
-                                    <select name="classification" >
-                                        <option value="">请选择文章类型</option>
+                                    <select name="classification">
+                                        <option value="">请选择博客分类</option>
                                         <option value="浙江省">浙江省</option>
                                         <option value="福建省">福建省</option>
                                         <option value="广东省">广东省</option>
@@ -93,16 +94,17 @@
                                     <input type="hidden" name="test-switch-slide" value="1"></pui-switch-slide>
                             </div>
                         </div>
-
-                        <button type="button" class="pui-btn pui-btn-default pui-btn-secondary publish_blog">
-                            发布博客 <span class="arrow-down"></span>
-                        </button>
-                        <button type="button" class="pui-btn pui-btn-info ">
-                            保存草稿 <span class="arrow-down"></span>
-                        </button>
-                        <button type="button" class="pui-btn pui-btn-default pui-btn-large">
-                            返回 <span class="arrow-down"></span>
-                        </button>
+                        <div class="pui-row pui-form-group pui-form-group-underline-dashed">
+                            <button type="button" class="pui-btn pui-btn-default pui-btn-secondary publish_blog">
+                                发布博客 <span class="arrow-down"></span>
+                            </button>
+                            <button type="button" class="pui-btn pui-btn-info ">
+                                保存草稿 <span class="arrow-down"></span>
+                            </button>
+                            <button type="button" class="pui-btn pui-btn-default pui-btn-large">
+                                返回 <span class="arrow-down"></span>
+                            </button>
+                        </div>
                     </form>
                 </div>
 
@@ -119,14 +121,114 @@
         {#        初始化编辑器#}
         var E = window.wangEditor
         var editor = new E('#editor')
-        // 或者 var editor = new E( document.getElementById('editor') )
+        // 或者 var editor = new E( document.getElementById('editor') )'
+        // 自定义菜单配置
+        editor.customConfig.menus = [
+            'head',  // 标题
+            'bold',  // 粗体
+            'fontSize',  // 字号
+            'fontName',  // 字体
+            'italic',  // 斜体
+            'underline',  // 下划线
+            'strikeThrough',  // 删除线
+            'foreColor',  // 文字颜色
+            'backColor',  // 背景颜色
+            'link',  // 插入链接
+            'list',  // 列表
+            'justify',  // 对齐方式
+            'quote',  // 引用
+            'emoticon',  // 表情
+            'image',  // 插入图片
+            'table',  // 表格
+            'video',  // 插入视频
+            'code',  // 插入代码
+            'undo',  // 撤销
+            'redo'  // 重复
+        ]
+
+        // 表情面板可以有多个 tab ，因此要配置成一个数组。数组每个元素代表一个 tab 的配置
+        {#        editor.customConfig.emotions = [#}
+        {#            {#}
+        {#                // tab 的标题#}
+        {#                title: '默认',#}
+        {#                // type -> 'emoji' / 'image'#}
+        {#                type: 'image',#}
+        {#                // content -> 数组#}
+        {#                content: [#}
+        {#                    {#}
+        {#                        alt: '[坏笑]',#}
+        {#                        src: 'http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/50/pcmoren_huaixiao_org.png'#}
+        {#                    },#}
+        {#                    {#}
+        {#                        alt: '[舔屏]',#}
+        {#                        src: 'http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/40/pcmoren_tian_org.png'#}
+        {#                    }#}
+        {#                ]#}
+        {#            },#}
+        {#            {#}
+        {#                // tab 的标题#}
+        {#                title: 'emoji',#}
+        {#                // type -> 'emoji' / 'image'#}
+        {#                type: 'emoji',#}
+        {#                // content -> 数组#}
+        {#                content: ['😀', '😃', '😄', '😁', '😆']#}
+        {#            }#}
+        {#        ]#}
+
+
+        // 通过 url 参数配置 debug 模式。url 中带有 wangeditor_debug_mode=1 才会开启 debug 模式,(debug模式下，有 JS 错误会以throw Error方式提示出来。默认值为false，即不会抛出异常)
+        editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0
+
+
+        // 关闭粘贴样式的过滤(当从其他网页复制文本内容粘贴到编辑器中，编辑器会默认过滤掉复制文本中自带的样式，目的是让粘贴后的文本变得更加简洁和轻量。用户可通过editor.customConfig.pasteFilterStyle = false手动关闭掉粘贴样式的过滤。)
+        editor.customConfig.pasteFilterStyle = false
+        // 忽略粘贴内容中的图片(从其他页面复制过来的内容，除了包含文字还可能包含图片，这些图片一般都是外域的（可能会有盗链）。此时如果想要忽略图片，即只粘贴文字不粘贴图片，可以使用editor.customConfig.pasteIgnoreImg = true来控制。默认是可以粘贴图片的)
+        editor.customConfig.pasteIgnoreImg = false
+        // 自定义处理粘贴的文本内容
+        editor.customConfig.pasteTextHandle = function (content) {
+            // content 即粘贴过来的内容（html 或 纯文本），可进行自定义处理然后返回
+            return content + '<br/>'
+        }
         editor.create()
 
 
         $(".publish_blog").on('click', function () {
-            layer.msg('请将内容填写完整')
-            var form = $("form")
-            form.submit;
+
+            var title = $("form input[name='title']").val().trim();
+            var type = $("form select[name='type']").val()
+            var classification = $("form select[name='classification']").val()
+
+{#            从wangeditor3读取内容#}
+{#            需要注意的是：从编辑器中获取的 html 代码是不包含任何样式的纯 html，如果显示的时候需要对其中的<table><code><blockquote>等标签进行自定义样式（这样既可实现多皮肤功能）#}
+            var content = editor.txt.html()  // 读取 html
+{#            var content = editor.txt.text()  // 读取 text#}
+
+            if (title == "" || title == "null" || type == ""  || classification == "" || content == "" || content == "null"){
+                layer.msg('请将内容填写完整', {
+                    time: 2000,//2s后自动关闭
+                    //skin:'warning-class',  //自定义样式
+                })
+                return false
+            }
+
+            var blog = new FormData()
+            blog.append("title",title);
+            blog.append("content",content);
+            blog.append("type",type);
+            blog.append("classification",classification);
+            $.ajax({
+                url:"/blog/write_blog/",
+                type:'post',
+                data:blog,
+                processData: false ,  // 告诉jQuery不要去处理发送的数据
+                contentType : false,  // 告诉jQuery不要去设置Content-Type请求头
+                success:function () {
+
+                },
+                error:function () {
+
+                }
+            })
         })
     </script>
 {% endblock %}
