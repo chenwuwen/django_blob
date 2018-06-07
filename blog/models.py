@@ -1,4 +1,11 @@
 # -*-coding:utf-8-*-
+
+"""
+根据Model生成数据库表命令，首先在setting.py中的INSTALLED_APPS 加入你的 app
+使用命令  python manage.py makemigrations + "app名称"  （有几个app，就使用几次命令）
+上述执行完成之后 使用命令 python manage.py migrate 就可以生成表了，生成的表 是上面命令加入的app中的表
+
+"""
 """
 有时在django的Model定义中，会出现引用一个未定义Model的情况,例如：
 classification = models.ForeignKey(BlogClassification, verbose_name="博客类型")  NameError: name 'BlogClassification' is not defined
@@ -34,6 +41,8 @@ class Blog(models.Model):
                                           on_delete="CASCADE")
     createUser = models.ForeignKey(to='user.User', to_field='id', verbose_name="创建人", on_delete="CASCADE",
                                    max_length=20)
+    open = models.IntegerField(verbose_name="是否私有文章,1:否，0:是")
+    valid = models.IntegerField(verbose_name="文章是否有效,0:审核中,1:审核通过,2:审核不通过,3:文章被删除,4:当前文章是草稿")
     createDate = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     def __str__(self):
@@ -42,7 +51,7 @@ class Blog(models.Model):
 
 class BlogComment(models.Model):
     class Meta:
-        db_table = "blog_info"
+        db_table = "blog_comment"
         verbose_name_plural = "博客评论表"
 
     id = models.AutoField(primary_key=True)
@@ -50,7 +59,7 @@ class BlogComment(models.Model):
     commentBlog = models.ManyToManyField(to='Blog', verbose_name="被评论博客", max_length=20)
     commentUser = models.ManyToManyField(to='user.User', verbose_name="评论人", max_length=20)
     commentDate = models.DateTimeField(auto_now_add=True, verbose_name="评论时间")
-    reply = models.ForeignKey(to='self', to_field='id', verbose_name="回复ID",on_delete="CASCADE", null=True)
+    reply = models.ForeignKey(to='self', to_field='id', verbose_name="回复ID", on_delete="CASCADE", null=True)
 
 
 class BlogCollect(models.Model):
@@ -59,8 +68,8 @@ class BlogCollect(models.Model):
         verbose_name_plural = "博客收藏表"
 
     id = models.AutoField(primary_key=True)
-    collectBlog = models.ManyToManyField(to='Blog',  verbose_name="被收藏博客", max_length=20)
-    collectUser = models.ManyToManyField(to='user.User',  verbose_name="收藏人", max_length=20)
+    collectBlog = models.ManyToManyField(to='Blog', verbose_name="被收藏博客", max_length=20)
+    collectUser = models.ManyToManyField(to='user.User', verbose_name="收藏人", max_length=20)
     collectBlogDate = models.DateField(auto_now_add=True, verbose_name="收藏时间")
 
 
@@ -75,7 +84,7 @@ class BlogType(models.Model):
         (1, '转载'),
         (2, '翻译'),
     )
-    name = models.CharField(choices=type_list, max_length=20, blank=True, null=True, verbose_name="类型分类名称")
+    name = models.IntegerField(choices=type_list, blank=True, null=True, verbose_name="类型分类名称")
 
 
 class BlogClassification(models.Model):
@@ -85,4 +94,15 @@ class BlogClassification(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="博客分类名称", max_length=20)
+    createDate = models.DateField(auto_now_add=True, verbose_name="创建时间")
+
+
+class BlogTag(models.Model):
+    class Meta:
+        db_table = "blog_tag"
+        verbose_name_plural = "博客标签"
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(verbose_name="标签名", max_length=20)
+    createUser = models.ForeignKey(to='user.User', to_field='id', verbose_name="创建人", on_delete="CASCADE")
     createDate = models.DateField(auto_now_add=True, verbose_name="创建时间")

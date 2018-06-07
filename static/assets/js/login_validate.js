@@ -69,12 +69,12 @@ $(function () {
     }, {
         url: "/user/register/",
         success: function (data) {
-            if (data.status){
-                alert("注册成功")
-                var notice = '<article class="pui-notice pui-notice-icon pui-notice-icon-success"><i class="pui-close pui-close-circle"></i><div class="pui-notice-content">'
-                notice+='<p>注册成功 ！</p>'
-                notice+='</div></article>'
-                $(".login-layout").append(notice)
+            if (data.status) {
+                layer.msg("注册成功,即将跳转到登录页面!", {
+                    time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                }, function () {
+                    window.location.href = "/user/login/"
+                })
             }
             console.log("ajaxSubmit.data", data);
         },

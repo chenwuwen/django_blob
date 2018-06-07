@@ -11,7 +11,7 @@ from django_blog.settings import BASE_DIR
 
 def auth(func):
     def inner(request, *args, **kwargs):
-        user = request.session.get('user', None)
+        user = request.session['user']
         if not user:
             return redirect('/user/login')
         return func(request, *args, **kwargs)

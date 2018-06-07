@@ -60,7 +60,8 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             user = result.cleaned_data
             # print("登陆成功，当前登陆人是：", user.__dict__['username'])
             print("登陆成功，当前登陆人是：", user['username'])
-            request.session['user'] = user
+            # request.session['user'] = user   #这个地方保存的session只是一个字典对象(而且这个字典对象内的key跟实体对象的字段也不一致,不能用来做数据库过滤条件),不能用于反向查询
+            request.session['user'] = User.objects.get(username=user['username'])
             # return redirect("/blog/index/")
             return HttpResponse(json.dumps(Login.res_ret), content_type="application/json")
         else:

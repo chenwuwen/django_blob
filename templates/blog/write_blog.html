@@ -12,8 +12,7 @@
                 {% include 'blog/blog_setting_slide.html' %}
 
                 <div class="pui-grid-xs-6 pui-grid-sm-8 pui-grid-md-9 pui-grid-lg-9 pui-grid-xl-9 pui-grid-xxl-9">
-                    <form class="pui-form pui-input-sm-large pui-input-md-large pui-grid" method="post"
-                          action="writer_blog">
+                    <form class="pui-form pui-input-sm-large pui-input-md-large pui-grid">
                         <div class="pui-row pui-form-group">
                             <div class="pui-grid-sm-12 pui-grid-md-12">
                                 <input name="title" type="text" placeholder="请输入文章标题"/>
@@ -40,21 +39,14 @@
 
                             <div class="pui-grid-sm-12 pui-grid-md-8">
                                 <div class="pui-card pui-card-default pui-card-box">
-                                    <pui-checkbox class="checked" name="option[]" value="选项一">选项一
-                                        <input type="checkbox"
-                                               name="option[]"
-                                               value="选项一"
-                                               checked="checked">
-                                    </pui-checkbox>
-                                    <pui-checkbox name="option[]" value="选项二">选项二
-                                        <input type="checkbox" name="option[]"
-                                               value="选项二"></pui-checkbox>
-                                    <pui-checkbox name="option[]" value="选项三" disabled="">选项三
-                                        <input type="checkbox"
-                                               name="option[]"
-                                               value="选项三"
-                                               disabled="disabled">
-                                    </pui-checkbox>
+                                    {% for blog_tag in blog_tag_list %}
+                                        <pui-checkbox name="option[]"
+                                                      value="{{ blog_tag.id }}">{{ blog_tag.name }}
+                                            <input type="checkbox"
+                                                   name="option[]"
+                                                   value="{{ blog_tag.id }}">
+                                        </pui-checkbox>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -76,9 +68,11 @@
                                 <div class="pui-select">
                                     <select name="classification">
                                         <option value="">请选择博客分类</option>
-                                        <option value="浙江省">浙江省</option>
-                                        <option value="福建省">福建省</option>
-                                        <option value="广东省">广东省</option>
+                                        {% for blog_classification in  blog_classification_list %}
+                                            <option value="{{ blog_classification.id }}">{{ blog_classification.name }}</option>
+                                        {% endfor %}
+
+
                                     </select>
                                 </div>
                             </div>
@@ -87,11 +81,11 @@
                         <div class="pui-row pui-form-group pui-form-group-underline-dashed">
                             <div class="pui-grid-sm-12 pui-grid-md-10">
                                 <label>私密文章：</label>
-                                <pui-switch-slide name="test-switch-slide" width="60" color="orange" on-color="green"
-                                                  off-color="gray" class="pui-round pui-switch-slide-animation"
+                                <pui-switch-slide name="open" width="60" color="orange" on-color="gray"
+                                                  off-color="green" class="pui-round pui-switch-slide-animation"
                                                   style="width: 64px; background-color: green; color: green;">
-                                    <span change="关" class="">开</span>
-                                    <input type="hidden" name="test-switch-slide" value="1"></pui-switch-slide>
+                                    <span change="是" class="">否</span>
+                                </pui-switch-slide>
                             </div>
                         </div>
                         <div class="pui-row pui-form-group pui-form-group-underline-dashed">
@@ -118,6 +112,13 @@
 {% block js %}
     <script type="text/javascript" src="/static/wangEditor-3.1.1/release/wangEditor.js"></script>
     <script type="text/javascript">
+        {#        监听回车事件,禁止表单回车自动提交,点击回车时,改变为换行符#}
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {
+                event.keyCode = 9
+            }
+        });
+
         {#        初始化编辑器#}
         var E = window.wangEditor
         var editor = new E('#editor')
@@ -198,12 +199,12 @@
             var type = $("form select[name='type']").val()
             var classification = $("form select[name='classification']").val()
 
-{#            从wangeditor3读取内容#}
-{#            需要注意的是：从编辑器中获取的 html 代码是不包含任何样式的纯 html，如果显示的时候需要对其中的<table><code><blockquote>等标签进行自定义样式（这样既可实现多皮肤功能）#}
+            {#            从wangeditor3读取内容#}
+            {#            需要注意的是：从编辑器中获取的 html 代码是不包含任何样式的纯 html，如果显示的时候需要对其中的<table><code><blockquote>等标签进行自定义样式（这样既可实现多皮肤功能）#}
             var content = editor.txt.html()  // 读取 html
-{#            var content = editor.txt.text()  // 读取 text#}
+            {#            var content = editor.txt.text()  // 读取 text#}
 
-            if (title == "" || title == "null" || type == ""  || classification == "" || content == "" || content == "null"){
+            if (title == "" || title == "null" || type == "" || classification == "" || content == "" || content == "null") {
                 layer.msg('请将内容填写完整', {
                     time: 2000,//2s后自动关闭
                     //skin:'warning-class',  //自定义样式
@@ -212,20 +213,20 @@
             }
 
             var blog = new FormData()
-            blog.append("title",title);
-            blog.append("content",content);
-            blog.append("type",type);
-            blog.append("classification",classification);
+            blog.append("title", title);
+            blog.append("content", content);
+            blog.append("type", type);
+            blog.append("classification", classification);
             $.ajax({
-                url:"/blog/write_blog/",
-                type:'post',
-                data:blog,
-                processData: false ,  // 告诉jQuery不要去处理发送的数据
-                contentType : false,  // 告诉jQuery不要去设置Content-Type请求头
-                success:function () {
+                url: "/blog/write_blog/",
+                type: 'post',
+                data: blog,
+                processData: false,  // 告诉jQuery不要去处理发送的数据
+                contentType: false,  // 告诉jQuery不要去设置Content-Type请求头
+                success: function () {
 
                 },
-                error:function () {
+                error: function () {
 
                 }
             })
