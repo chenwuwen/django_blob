@@ -44,6 +44,8 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
 
     def post(self, request):
 
+        remember_me = request.POST.get('rememberMe')
+
         result = LoginForm(request.POST)
 
         vcode = request.session['CheckCode']
@@ -60,18 +62,22 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             print("登陆成功，当前登陆人是：", user['username'])
             # request.session['user'] = user   #这个地方保存的session只是一个字典对象(而且这个字典对象内的key跟实体对象的字段也不一致,不能用来做数据库过滤条件),不能用于反向查询
             request.session['user'] = User.objects.get(username=user['username'])
+            if remember_me:  # 记住我,设定过期时间在1个月之后
+                request.session.set_expiry(2592000)
             # return redirect("/blog/index/")
             response = BaseResponse()
             response.status = True
-            return HttpResponse(json.dumps(response, cls=JsonCustomEncoder), content_type="application/json")
+            # 通过dumps()方法中的cls函数,添加自定义的处理函数
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
         else:
             # form.errors: 获取错误信息,表单的错误以字典形式返回(如果有多个错误, 可以循环这个字典, 然后传给前端)
             print(result)
             print(result.errors)
             print(result.errors.as_json())
             # return render(request, "login.html", {'err': result})
-            BaseResponse.message = result.errors.as_json()
-            return HttpResponse(json.dumps(BaseResponse, cls=JsonCustomEncoder), content_type="application/json")
+            response = BaseResponse()
+            response.message = result.errors.as_json()
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
 
 
 # 注册（返回统一为json，提示注册成功，重新登录）
@@ -83,35 +89,43 @@ class Register(View):
 
         result = RegisterForm(request.POST)
         ret = result.is_valid()
+        response = BaseResponse()
         if ret:
-            BaseResponse.status = True
-            return HttpResponse(json.dumps(BaseResponse), content_type="application/json")
+            response.status = True
+            return HttpResponse(json.dumps(response.__dict__), content_type="application/json")
         else:
             # 错误返回json
             print(result.errors)
             error = result.errors.as_json()
             # error = result.errors.as_data()
-            BaseResponse.message = result.errors.as_json()
-            return HttpResponse(json.dumps(BaseResponse), content_type="application/json")
+            response.message = result.errors.as_json()
+            return HttpResponse(json.dumps(response.__dict__), content_type="application/json")
 
 
 # 验证用户名
 def valid_username(request):
-    result = {'status': True, 'error': None, 'data': None}
     if request.method == 'GET':
         username = request.GET.get('username')
-
         users = User.objects.filter(username=username)
         # https://code.ziqiangxuetang.com/django/django-queryset-api.html
+        response = BaseResponse()
         if not users.exists():
-            return HttpResponse(json.dumps(result, cls=JsonCustomEncoder), content_type="application/json")
+            response.status = True
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
         else:
-            result['status'] = False
-            result['error'] = '用户名已存在'
-            return HttpResponse(json.dumps(result, cls=JsonCustomEncoder), content_type="application/json")
+            response.summary = '用户名已存在'
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
 
 
-
+# 校验邮箱
+def valid_email(request):
+    if request.method == 'GET':
+        email = User.objects.filter(email=request.GET.get('email')).count()
+        if not email:
+            pass
+        else:
+            BaseResponse.summary = '邮箱已存在'
+            return HttpResponse(json.dumps(BaseResponse, cls=JsonCustomEncoder), content_type="application/json")
 
 
 # 注销

@@ -1,4 +1,5 @@
 '''装饰器'''
+import json
 
 from django.shortcuts import render, redirect
 import traceback
@@ -6,9 +7,11 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 
 # 验证Session是否存在的装饰器
+from common.utils.response import BaseResponse
 from django_blog.settings import BASE_DIR
 
 
+# 重定向装饰器
 def auth(func):
     def inner(request, *args, **kwargs):
         user = request.session['user']
@@ -19,8 +22,20 @@ def auth(func):
     return inner
 
 
+# json权限验证装饰器
+def auth_json(func):
+    def inner(self, *args, **kwargs):
+        if not self.session['user']:
+            rep = BaseResponse()
+            rep.summary = "未登录"
+            self.write(json.dumps(rep.__dict__))
+            return
+        func(self, *args, **kwargs)
 
-#带参数的装饰器需要2层装饰器实现,第一层传参数，第二层传函数，每层函数在上一层返回
+    return inner
+
+
+# 带参数的装饰器需要2层装饰器实现,第一层传参数，第二层传函数，每层函数在上一层返回
 def logger():
     def outter(func):
         def inner(*args, **kwargs):

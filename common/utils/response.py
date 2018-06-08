@@ -17,7 +17,7 @@ class StatusCodeEnum:
     FavorMinus = 2302
 
 
-class BaseResponse:
+class BaseResponse(object):
     def __init__(self):
         self.status = False
         self.code = StatusCodeEnum.Success

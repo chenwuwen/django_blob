@@ -6,16 +6,8 @@ $(function () {
     // 登录表单
 
     $("#loginForm").formValidator({
-        username: {
-            rule: "username",
-            maxLength: 16,
-            minLength: 6
-        },
-
-        password: {
-            rule: "password"
-        },
-
+        username: {},
+        password: {},
         vcode: {
             minLength: 4,
             maxLength: 4
@@ -33,7 +25,7 @@ $(function () {
             console.log("ajaxSubmit.error", status);
         }
     }, {
-        normal: "* 必填项"
+        normal: ""
     });
 
 
@@ -41,12 +33,15 @@ $(function () {
     $("#registerForm").formValidator({
         username: {
             rule: "username",
-            ajax: "/user/valid_username?username=username",
             maxLength: 16,
             minLength: 6,
-            message: {
-                error: "错误：当前用户名已存在。"
+            ajax: "/user/valid_username?username=username",
+            success: function (data) {
+                if (data.status) {
+
+                }
             }
+
         },
 
         password: {

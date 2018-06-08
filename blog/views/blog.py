@@ -7,6 +7,7 @@ from django.views import View
 
 from blog.models import Blog, BlogClassification, BlogTag
 from blog.validform import BlogForm
+from common.utils.json_util import JsonCustomEncoder
 from common.utils.response import BaseResponse
 from user.models import User
 
@@ -52,11 +53,12 @@ class WriteBlog(View):
     def post(self, request):
         result = BlogForm(request.POST)
         ret = result.is_valid()
+        response = BaseResponse()
         if ret:
             blog = result.cleaned_data
             Blog.objects.create(blog)
-            BaseResponse.status = True
-            return HttpResponse(json.dumps(BaseResponse), content_type='application/json')
+            response.status = True
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
         else:
-            BaseResponse.message(result.errors.as_json())
-            return HttpResponse(json.dumps(BaseResponse), content_type='application/json')
+            response.message(result.errors.as_json())
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')

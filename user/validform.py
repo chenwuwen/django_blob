@@ -7,7 +7,7 @@ http://www.cnblogs.com/wupeiqi/articles/6144178.html
 import datetime
 
 from django.core.exceptions import ValidationError
-from django.forms import forms, fields
+from django import forms
 from user.models import *
 
 
@@ -22,9 +22,10 @@ from user.models import *
 
 
 class LoginForm(forms.Form):
-    username = fields.CharField(required=True, error_messages={'required': '用户名不能为空'})
-    password = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
-    vcode = fields.CharField(required=True, error_messages={'required': '验证码不能为空'})
+    username = forms.CharField(required=True, error_messages={'required': '用户名不能为空'})
+    password = forms.CharField(required=True, error_messages={'required': '密码不能为空'})
+    vcode = forms.CharField(required=True, error_messages={'required': '验证码不能为空'})
+    rememberMe = forms.CharField(required=False)
 
     # 自定义方法（局部钩子(该from里有几个字段,就有几个局部钩子,当然自己也可以进行选择定义,方法名为 clean_(字段名))：当局部钩子抛出异常,如果自己不去捕获处理异常,则将异常抛出到页面）
     # def clean_username(self):
@@ -36,6 +37,7 @@ class LoginForm(forms.Form):
 
     # 自定义方法（全局钩子, 检验两个字段）
     def clean(self):
+        # self.request.session.get('CheckCode')
         # v0 = self.cleaned_data['vcode'].lower()
         # if v0 == self.request.session['CheckCode']:
         # print(type(self.cleaned_data))
@@ -44,6 +46,7 @@ class LoginForm(forms.Form):
             v2 = self.cleaned_data['password']
             # 删除字典中vcode键,用以用户名密码在数据库查询
             self.cleaned_data.pop('vcode')
+            self.cleaned_data.pop('rememberMe')
             print(self.cleaned_data)
             '''
             # 这里用了get,而不是filter,是因为filter查询出来的是一个QuerySet对象,而get是只取一个匹配的结果如果记录不存在的话，它会报错,如果Model类重写了_str_方法，则返回str方法里的返回值
@@ -101,11 +104,25 @@ class LoginForm(forms.Form):
 
 # 注册验证form
 class RegisterForm(forms.Form):
-    username = fields.CharField(required=True, error_messages={'required': '用户名不能为空'})
-    password = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
-    confirmPassword = fields.CharField(required=True, error_messages={'required': '密码不能为空'})
-    email = fields.EmailField(required=True, error_messages={'required': '密码不能为空', 'invalid': '邮箱格式错误'})
-    vcode = fields.CharField(required=True, error_messages={'required': '验证码不能为空'})
+    username = forms.CharField(required=True, error_messages={'required': '用户名不能为空'})
+    password = forms.CharField(required=True, error_messages={'required': '密码不能为空'})
+    confirmPassword = forms.CharField(required=True, error_messages={'required': '确认密码不能为空'})
+    email = forms.EmailField(required=True, error_messages={'required': '邮箱不能为空', 'invalid': '邮箱格式错误'})
+    vcode = forms.CharField(required=True, error_messages={'required': '验证码不能为空'})
+
+    def clean_username(self):
+        user = User.objects.get(username=self.cleaned_data['username']).count()
+        if not user:
+            return self.cleaned_data['username']
+        else:
+            raise ValidationError(message='用户名已经存在', code='invalid')
+
+    def clean_email(self):
+        user = User.objects.get(username=self.cleaned_data['email']).count()
+        if not user:
+            return self.cleaned_data['email']
+        else:
+            raise ValidationError(message='邮箱已经存在', code='invalid')
 
     def clean(self):
         v0 = self.cleaned_data['vcode']
@@ -113,7 +130,7 @@ class RegisterForm(forms.Form):
         v2 = self.cleaned_data['confirmPassword']
         v3 = self.cleaned_data['email']
 
-        # if v0==self.request.session('vcode').lower():
+        # if v0==self.request.session['CheckCode'].lower():
         if v0:
             self.cleaned_data.pop('vcode')
             self.cleaned_data.pop('confirmPassword')
@@ -123,7 +140,7 @@ class RegisterForm(forms.Form):
                 # user.save()
                 User.objects.create(**self.cleaned_data)
             else:
-                raise ValidationError('密码不一致')
+                raise ValidationError(message='密码不一致', code='invalid')
         else:
-            raise ValidationError('验证码错误')
+            raise ValidationError(message='验证码错误', code='invalid')
         return self.cleaned_data
