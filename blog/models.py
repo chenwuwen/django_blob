@@ -37,12 +37,15 @@ class Blog(models.Model):
     title = models.CharField(max_length=150, verbose_name="博客标题")  # 博客标题
     content = models.TextField(verbose_name="博客正文")  # 博客正文
     type = models.CharField(verbose_name="博客分类", max_length=20)
-    classification = models.OneToOneField(to='BlogClassification', to_field='id', max_length=20, verbose_name="博客类型",
-                                          on_delete="CASCADE")
+    classification = models.ForeignKey(to='BlogClassification', to_field='id', max_length=20, verbose_name="博客类型",
+                                       on_delete="CASCADE")
     createUser = models.ForeignKey(to='user.User', to_field='id', verbose_name="创建人", on_delete="CASCADE",
                                    max_length=20)
     open = models.IntegerField(verbose_name="是否私有文章,1:否，0:是")
     valid = models.IntegerField(verbose_name="文章是否有效,0:审核中,1:审核通过,2:审核不通过,3:文章被删除,4:当前文章是草稿")
+    readTotal = models.IntegerField(verbose_name="阅读量(只有页面滚动到页底,才计算)")
+    favorTotal = models.IntegerField(verbose_name="点赞量")
+    commentTotal = models.IntegerField(verbose_name="评论数量(评论的回复不算在内)")
     createDate = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     def __str__(self):
@@ -76,7 +79,7 @@ class BlogCollect(models.Model):
 class BlogType(models.Model):
     class Meta:
         db_table = "blog_type"
-        verbose_name_plural = "博客类型"
+        verbose_name_plural = "文章类型"
 
     id = models.AutoField(primary_key=True)
     type_list = (
@@ -105,4 +108,16 @@ class BlogTag(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="标签名", max_length=20)
     createUser = models.ForeignKey(to='user.User', to_field='id', verbose_name="创建人", on_delete="CASCADE")
+    createDate = models.DateField(auto_now_add=True, verbose_name="创建时间")
+
+
+class BlogFavor(models.Model):
+    class Meta:
+        db_table = "blog_favor"
+        verbose_name_plural = "点赞表"
+
+    id = models.AutoField(primary_key=True)
+    favorUser = models.ForeignKey(to='user.User', to_field='id', verbose_name="点赞人", on_delete="CASCADE")
+    favorBlog = models.ForeignKey(to='Blog', to_field='id', verbose_name="被赞博客", on_delete="CASCADE")
+    status = models.IntegerField(verbose_name="状态：0表示无效赞，1表示有效赞")
     createDate = models.DateField(auto_now_add=True, verbose_name="创建时间")

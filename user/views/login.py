@@ -1,13 +1,13 @@
 import json
 
-from astropy.utils import JsonCustomEncoder
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.validators import ValidationError
 # Create your views here.
 from django.views import View
 
 from common.decorators import auth
+from common.utils.json_util import JsonCustomEncoder
+from common.utils.response import BaseResponse
 from user.models import User
 from user.validform import RegisterForm, LoginForm
 
@@ -28,8 +28,6 @@ def test(request):
 # 登录
 class Login(View):  # 这里需要注意，使用CBV必须继承View类
 
-    # 定义返回值
-    res_ret = {'status': True, 'error': None, 'data': None}
 
     def dispatch(self, request, *args, **kwargs):
         # 调用父类中的dispatch
@@ -63,16 +61,17 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             # request.session['user'] = user   #这个地方保存的session只是一个字典对象(而且这个字典对象内的key跟实体对象的字段也不一致,不能用来做数据库过滤条件),不能用于反向查询
             request.session['user'] = User.objects.get(username=user['username'])
             # return redirect("/blog/index/")
-            return HttpResponse(json.dumps(Login.res_ret), content_type="application/json")
+            response = BaseResponse()
+            response.status = True
+            return HttpResponse(json.dumps(response, cls=JsonCustomEncoder), content_type="application/json")
         else:
             # form.errors: 获取错误信息,表单的错误以字典形式返回(如果有多个错误, 可以循环这个字典, 然后传给前端)
             print(result)
             print(result.errors)
             print(result.errors.as_json())
-            Login.res_ret['status'] = False
-            Login.res_ret['error'] = result.errors.as_json()
             # return render(request, "login.html", {'err': result})
-            return HttpResponse(json.dumps(Login.res_ret, cls=JsonCustomEncoder), content_type="application/json")
+            BaseResponse.message = result.errors.as_json()
+            return HttpResponse(json.dumps(BaseResponse, cls=JsonCustomEncoder), content_type="application/json")
 
 
 # 注册（返回统一为json，提示注册成功，重新登录）
@@ -81,21 +80,19 @@ class Register(View):
         return render(request, "login.html")
 
     def post(self, request):
-        # 定义返回值
-        res_ret = {'status': True, 'error': None, 'data': None}
 
         result = RegisterForm(request.POST)
         ret = result.is_valid()
         if ret:
-            return HttpResponse(json.dumps(res_ret), content_type="application/json")
+            BaseResponse.status = True
+            return HttpResponse(json.dumps(BaseResponse), content_type="application/json")
         else:
             # 错误返回json
             print(result.errors)
             error = result.errors.as_json()
             # error = result.errors.as_data()
-            res_ret['status'] = False
-            res_ret['error'] = error
-            return HttpResponse(json.dumps(res_ret), content_type="application/json")
+            BaseResponse.message = result.errors.as_json()
+            return HttpResponse(json.dumps(BaseResponse), content_type="application/json")
 
 
 # 验证用户名
@@ -113,13 +110,6 @@ def valid_username(request):
             result['error'] = '用户名已存在'
             return HttpResponse(json.dumps(result, cls=JsonCustomEncoder), content_type="application/json")
 
-
-# class JsonCustomEncoder(json.JSONEncoder):
-#     def default(self, field):
-#         if isinstance(field, ValidationError):
-#             return {'code': field.code, 'message': field.message}
-#         else:
-#             return json.JSONEncoder.default(self, field)
 
 
 

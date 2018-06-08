@@ -19,7 +19,7 @@ from blog.views import index, blog
 
 urlpatterns = [
     path('index/', index.Index.as_view()),
-    path('read_blog/', blog.ReadBlog.as_view()),
+    path('read_blog/<int:blog_id>', blog.ReadBlog.as_view()),
     path('write_blog/', blog.WriteBlog.as_view()),
 
 ]

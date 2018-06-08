@@ -10,4 +10,8 @@ class BlogForm(forms.Form):
         content = self.cleaned_data['content']
         # 检测是否含有敏感字classification
         # todo
-        pass
+        return self.cleaned_data
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        return self.cleaned_data

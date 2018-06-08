@@ -3,7 +3,6 @@
 
 
 class StatusCodeEnum:
-
     Failed = 1000
     AuthFailed = 1001
     ArgsError = 1002
@@ -19,10 +18,9 @@ class StatusCodeEnum:
 
 
 class BaseResponse:
-
     def __init__(self):
         self.status = False
         self.code = StatusCodeEnum.Success
         self.data = None
-        self.summary = None
+        self.summary = None  # 摘要
         self.message = {}

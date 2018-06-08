@@ -16,7 +16,7 @@ class CustomerBlogClassification(admin.ModelAdmin):
 
 
 class CustomerBlogTag(admin.ModelAdmin):
-    list_display = ('id', 'name', 'createDate',)
+    list_display = ('id', 'name', 'createUser', 'createDate',)
 
 
 admin.site.register(models.Blog, CustomerBlog)
