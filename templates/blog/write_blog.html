@@ -39,12 +39,9 @@
 
                             <div class="pui-grid-sm-12 pui-grid-md-8">
                                 <div class="pui-card pui-card-default pui-card-box">
-                                    {% for blog_tag in blog_tag_list %}
-                                        <pui-checkbox name="option[]"
-                                                      value="{{ blog_tag.id }}">{{ blog_tag.name }}
-                                            <input type="checkbox"
-                                                   name="option[]"
-                                                   value="{{ blog_tag.id }}">
+                                    {% for self_sort in self_sort_list %}
+                                        <pui-checkbox name="self_sort"
+                                                      value="{{ self_sort.id }}">{{ self_sort.name }}
                                         </pui-checkbox>
                                     {% endfor %}
                                 </div>
@@ -198,6 +195,13 @@
             var title = $("form input[name='title']").val().trim();
             var type = $("form select[name='type']").val()
             var classification = $("form select[name='classification']").val()
+            var open = $("form  input[name='open']").val()
+            var self_sorts = []
+            $("form  input[name='self_sort']").each(function () {
+                if ($(this)[0].hasAttribute("checked")) {
+                    self_sorts.push($(this).val())
+                }
+            })
 
             {#            从wangeditor3读取内容#}
             {#            需要注意的是：从编辑器中获取的 html 代码是不包含任何样式的纯 html，如果显示的时候需要对其中的<table><code><blockquote>等标签进行自定义样式（这样既可实现多皮肤功能）#}
@@ -217,14 +221,22 @@
             blog.append("content", content);
             blog.append("type", type);
             blog.append("classification", classification);
+            blog.append("open", open);
+            blog.append("selfSort", self_sorts.join(','));
             $.ajax({
                 url: "/blog/write_blog/",
                 type: 'post',
                 data: blog,
                 processData: false,  // 告诉jQuery不要去处理发送的数据
                 contentType: false,  // 告诉jQuery不要去设置Content-Type请求头
-                success: function () {
+                success: function (data) {
+                    if (data.status) {
+                        layer.msg("发布成功",function () {
+                            
+                        })
+                    } else {
 
+                    }
                 },
                 error: function () {
 

@@ -45,6 +45,43 @@
                             </div>
                         </div>
                     </div>
+
+                    {% for blog in  blog_list %}
+                        <div class="pui-card pui-card-default pui-card-simple">
+                            <div class="pui-card-title">
+                                <strong><a href="view.html">转载：{{ blog.title }}</a></strong>
+                                <p class="article-category">
+                                    来源：<a href="http://cdc.tencent.com/?p=8087">腾讯CDC</a>&nbsp;&nbsp;&nbsp;分类：<a
+                                        href="#">交互设计</a>, <a href="#">网页设计</a>
+                                </p>
+                                <span class="article-date"><small>{{ blog.createDate|date:'Y' }}</small>
+                                    {{ blog.createDate|date:'m-d' }}</span>
+                            </div>
+                            <div class="pui-card-box">
+                                <p><img src="http://cdc.tencent.com/wp-content/uploads/2014/05/banner1.jpg"
+                                        class="pui-img-full-width article-image"/></p>
+                                <div class="pui-text-sm">
+                                    <p>{{ blog.content|truncatewords:"30" }}...</p>
+                                </div>
+                                <p class="pui-text-right">
+                                    <a href="/blog/read_blog/{{ blog.id }}" class="pui-link"><strong>阅读全文>></strong></a>
+                                </p>
+                            </div>
+                            <div class="pui-card-foot pui-clear">
+                        <span class="pui-text-gary"><i class="fa fa-eye"></i> 浏览: {{ blog.readTotal }}&nbsp;&nbsp;&nbsp;<i
+                                class="fa fa-heart-o"></i> 喜爱: {{ blog.favorTotal }}</span>
+                                <div class="bdsharebuttonbox pui-right">
+                                    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+                                    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+                                    <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+                                    <a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+                                    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+                                    <a href="#" class="bds_more" data-cmd="more"></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
                     <div class="blog-pagination">
                         <ul class="pui-pagination pui-pagination-bordered pui-pagination-prev-next">
                             <li><a href="#" class="disabled">上一页</a></li>

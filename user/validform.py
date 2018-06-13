@@ -111,14 +111,14 @@ class RegisterForm(forms.Form):
     vcode = forms.CharField(required=True, error_messages={'required': '验证码不能为空'})
 
     def clean_username(self):
-        user = User.objects.get(username=self.cleaned_data['username']).count()
+        user = User.objects.filter(username=self.cleaned_data['username']).count()
         if not user:
             return self.cleaned_data['username']
         else:
             raise ValidationError(message='用户名已经存在', code='invalid')
 
     def clean_email(self):
-        user = User.objects.get(username=self.cleaned_data['email']).count()
+        user = User.objects.filter(username=self.cleaned_data['email']).count()
         if not user:
             return self.cleaned_data['email']
         else:

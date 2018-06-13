@@ -41,11 +41,13 @@ class Blog(models.Model):
                                        on_delete="CASCADE")
     createUser = models.ForeignKey(to='user.User', to_field='id', verbose_name="创建人", on_delete="CASCADE",
                                    max_length=20)
-    open = models.IntegerField(verbose_name="是否私有文章,1:否，0:是")
-    valid = models.IntegerField(verbose_name="文章是否有效,0:审核中,1:审核通过,2:审核不通过,3:文章被删除,4:当前文章是草稿")
-    readTotal = models.IntegerField(verbose_name="阅读量(只有页面滚动到页底,才计算)")
-    favorTotal = models.IntegerField(verbose_name="点赞量")
-    commentTotal = models.IntegerField(verbose_name="评论数量(评论的回复不算在内)")
+    open = models.IntegerField(verbose_name="是否私有文章,1:否，0:是", default=1)
+    tags = models.CharField(verbose_name="标签", max_length=50, blank=True)
+    selfSort = models.CharField(verbose_name="个人分类", max_length=50)
+    valid = models.IntegerField(verbose_name="文章是否有效,0:审核中,1:审核通过,2:审核不通过,3:文章被删除,4:当前文章是草稿", default=0)
+    readTotal = models.IntegerField(verbose_name="阅读量(只有页面滚动到页底,才计算)", default=0)
+    favorTotal = models.IntegerField(verbose_name="点赞量", default=0)
+    commentTotal = models.IntegerField(verbose_name="评论数量(评论的回复不算在内)", default=0)
     createDate = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     def __str__(self):
@@ -100,10 +102,10 @@ class BlogClassification(models.Model):
     createDate = models.DateField(auto_now_add=True, verbose_name="创建时间")
 
 
-class BlogTag(models.Model):
+class SelfSort(models.Model):
     class Meta:
-        db_table = "blog_tag"
-        verbose_name_plural = "博客标签"
+        db_table = "self_sort"
+        verbose_name_plural = "个人分类"
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="标签名", max_length=20)

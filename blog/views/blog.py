@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 
-from blog.models import Blog, BlogClassification, BlogTag
+from blog.models import Blog, BlogClassification, SelfSort
 from blog.validform import BlogForm
 from common.utils.json_util import JsonCustomEncoder
 from common.utils.response import BaseResponse
@@ -33,8 +33,13 @@ pk字段同样也支持跨模型的查询，比如下面的三种写法，效果
 class ReadBlog(View):
     def get(self, request, blog_id):
         blog = Blog.objects.get(pk=blog_id)
-        comment_list = blog.blogcomment_set.add()
-        return render(request, "blog/view.html", {'blog': blog, 'comment_list': comment_list})
+        comment_list = blog.blogcomment_set.all()
+        comment_count = 0
+        for comment in comment_list:
+            if not comment.reply:  # 如果回复id不为Null
+                comment_count += 1
+        return render(request, "blog/view.html",
+                      {'blog': blog, 'comment_count': comment_count, 'comment_list': comment_list})
 
 
 # 写博客
@@ -45,9 +50,9 @@ class WriteBlog(View):
         # user = request.session['user']  #主表的对象可以从session获取(需要设置session的时候保存的是对象),也可以为数据库查询(但是必须是get()获取的单一查询 ,使用filter（），excute（）等获取的是查询集集合不能用此方法)
         # 注意：blogtag_set为小写（首字母和中间的都要小写
         # blog_tag_list = user.blogtag_set.all()
-        blog_tag_list = request.session['user'].blogtag_set.all()
+        self_sort_list = request.session['user'].selfsort_set.all()
         return render(request, "blog/write_blog.html",
-                      {'blog_classification_list': blog_classification_list, 'blog_tag_list': blog_tag_list}
+                      {'blog_classification_list': blog_classification_list, 'self_sort_list': self_sort_list}
                       )
 
     def post(self, request):
@@ -55,8 +60,11 @@ class WriteBlog(View):
         ret = result.is_valid()
         response = BaseResponse()
         if ret:
-            blog = result.cleaned_data
-            Blog.objects.create(blog)
+            classification_id = result.cleaned_data['classification']
+            classification = BlogClassification.objects.get(pk=classification_id)
+            result.cleaned_data['classification'] = classification
+            result.cleaned_data['createUser'] = request.session['user']
+            Blog.objects.create(**result.cleaned_data)
             response.status = True
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
         else:

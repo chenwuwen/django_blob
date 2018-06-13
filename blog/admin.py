@@ -15,11 +15,11 @@ class CustomerBlogClassification(admin.ModelAdmin):
     list_display = ('id', 'name', 'createDate',)
 
 
-class CustomerBlogTag(admin.ModelAdmin):
+class CustomerSelfSort(admin.ModelAdmin):
     list_display = ('id', 'name', 'createUser', 'createDate',)
 
 
 admin.site.register(models.Blog, CustomerBlog)
 admin.site.register(models.BlogType, CustomerBlogType)
 admin.site.register(models.BlogClassification, CustomerBlogClassification)
-admin.site.register(models.BlogTag, CustomerBlogTag)
+admin.site.register(models.SelfSort, CustomerSelfSort)

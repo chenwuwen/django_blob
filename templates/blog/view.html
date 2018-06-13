@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block css %}
-        <link rel="stylesheet" type="text/css" href="/static/assets/css/blog_view.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/blog_view.css"/>
 {% endblock %}
 
 {% block main %}
@@ -14,17 +14,19 @@
                 <div class="pui-grid-xs-12 pui-grid-sm-8 pui-grid-md-8 pui-grid-lg-9 blog-list">
                     <div class="pui-card pui-card-default pui-card-simple">
                         <div class="pui-card-title">
-                            <strong><a href="view.html">转载：扁平和简约来袭</a></strong>
+                            <strong><a href="view.html">{{ blog.title }}</a></strong>
                             <p class="article-category">
                                 来源：<a href="http://cdc.tencent.com/?p=7951">腾讯CDC</a>&nbsp;&nbsp;&nbsp;分类：<a href="#">交互设计</a>,
                                 <a href="#">网页设计</a>
                             </p>
-                            <span class="article-date"><small>2014</small>02-12</span>
+                            <span class="article-date"><small>{{ blog.createDate|date:'Y' }}</small>
+                                {{ blog.createDate|date:'m-d' }}</span>
                         </div>
                         <div class="pui-card-foot pui-clear">
-                            <span class="pui-text-gary"><i class="fa fa-eye"></i> 浏览: 150,278&nbsp;&nbsp;&nbsp;<i
-                                    class="fa fa-comments"></i> <a href="#comments" class="pui-text-gary">评论: 15</a>&nbsp;&nbsp;&nbsp;<i
-                                    class="fa fa-heart-o"></i> 喜爱: 312</span>
+                            <span class="pui-text-gary"><i class="fa fa-eye"></i> 浏览: {{ blog.readTotal }}&nbsp;&nbsp;&nbsp;<i
+                                    class="fa fa-comments"></i> <a href="#comments"
+                                                                   class="pui-text-gary">评论: {{ comment_count }}</a>&nbsp;&nbsp;&nbsp;<i
+                                    class="fa fa-heart-o"></i> 喜爱: {{ blog.favorTotal }}</span>
                             <div class="bdsharebuttonbox pui-right">
                                 <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
                                 <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
@@ -48,73 +50,7 @@
                                     </p>
                                 </blockquote>
                                 <br/>
-                                <p class="pui-text-indent">
-                                    在过去几年里，软件和APP的界面设计风格发生了迅速变化，由3D、拟物发展到扁平、简约。尽管这一趋势普遍存在，我们还是思考下是如何发展至此的，以及它对整个界面设计领域有何影响。另外，我会分享扁平界面设计的一些技巧和注意问题。</p>
-                                <p class="pui-text-center"><img
-                                        src="http://cdc.tencent.com/wp-content/uploads/2014/02/Flat-And-Thin-Are-In_mobile_os_mini.jpg"
-                                        class="pui-img-responsive"/></p>
-                                <p class="pui-text-center">
-                                    <small>Windows Phone 8 和 Apple’s iOS 7的用户界面</small>
-                                </p>
-                                <h2>发生了什么？</h2>
-                                <p class="pui-text-indent">
-                                    那么，为什么群体意识从喜爱带纹理、有透视和阴影的设计转变喜爱扁平色彩和极简图形的设计呢？当然导致这一转变有很多因素，但是有一些因素更为突出。 </p>
-                                <h4>信息过载</h4>
-                                <p class="pui-text-indent">
-                                    随着世界联系越来越紧密，我们不断地接受大量信息，一些信息是重要的、相关的，但大部分不是。我们不断地评估其价值，过滤无用信息，或创建新的内容，所有这些都使我们精疲力竭。还有，大部分内容消费已转移到小屏幕设备，更是加剧了超负荷现象。这样我们就很容易就淹没在信息中，砍掉用户界面（UI）的繁杂元素才是视觉设计的王道。</p>
-                                <p class="pui-text-center"><img
-                                        src="http://cdc.tencent.com/wp-content/uploads/2014/02/Flat-And-Thin-Are-In_geckoboard_mini.jpg"
-                                        class="pui-img-responsive"/></p>
-                                <p class="pui-text-center">
-                                    <small>摆脱混乱: Geckoboard的设计使关键数据被一目了然呈现，并易于理解</small>
-                                </p>
-                                <h4>简约就是金科玉律</h4>
-                                <p class="pui-text-indent">
-                                    同样有个趋势就是，颠覆性的网页应用和服务正提供高度专用化的工具，只设计少数功能。虽然传统软件开发员倾向于为产品加载过多功能，以期获得高价定位；但目前变化趋势专注于微应用，偏爱功能简洁。简单的应用意味着有简单的界面。</p>
-                                <p class="pui-text-center"><img
-                                        src="http://cdc.tencent.com/wp-content/uploads/2014/02/Flat-And-Thin-Are-In_blue_mini.jpg"
-                                        class="pui-img-responsive"/></p>
-                                <p class="pui-text-center">
-                                    <small>美观且精致： 由Oak.设计的 Blue 天气应用程序</small>
-                                </p>
-                                <h4>又一次，以内容核心</h4>
-                                <p class="pui-text-indent">
-                                    新设备和新技术涌入市场时，常常会出现这样的情况，我们热衷于思考于它们能做什么，我们又怎样才能提高交互性。但关注界面设计这一狂热之后又回归专注于内容。媒体资源的消费，不论文字、音乐还是视频、音视频，等我们设备上最常用的活动，在你乐享其中时，肯定不希望被无关的界面元素打扰。</p>
-                                <h4>技术水平</h4>
-                                <p class="pui-text-indent">
-                                    随着智能手机和平板电脑已渗透到千家万户，显性操作正在逐渐减少。过去，如果弹窗没有从屏幕跳出来，我们曾担心用户会错过操作，而现在，我们更愿意让用户去探索这种细微的交互体验。鉴于此，很多互联网产品已经支持没有任何视觉引导的触碰指令。</p>
-                                <p class="pui-text-center"><img
-                                        src="http://cdc.tencent.com/wp-content/uploads/2014/02/Flat-And-Thin-Are-In_fitbit_dashboard_mini.jpg"
-                                        class="pui-img-responsive"/></p>
-                                <p class="pui-text-center">
-                                    <small>Fitbit的仪表盘的视觉设计清爽,、胆大,和亲和力</small>
-                                </p>
-                                <h4>技术的影响</h4>
-                                <p class="pui-text-indent">
-                                    大部分软件受限于运行平台。屏幕尺寸和像素密度也受限于硬件设备条件。一个简约的界面需要十分有限的设计元素，这意味着每一个元素都要有所发挥。排版布局和字体粗细在很大程度上决定了扁平设计的美观和易用性。</p>
-                                <p class="pui-text-indent">
-                                    如果你的目标设备不能处理好这方面的细微差别，你就不太幸运了。随着屏幕尺寸和像素密度不断增加，更细、更小的样式也能呈现最佳的清晰度。当然，对@font-face属性的支持，提高了对文字间距的集中处理，也增加了极简排版的吸引力。</p>
-                                <p class="pui-text-center"><img
-                                        src="http://cdc.tencent.com/wp-content/uploads/2014/02/Flat-And-Thin-Are-In_wallmob_mini.jpg"
-                                        class="pui-img-responsive"/></p>
-                                <p class="pui-text-center">
-                                    <small>Wallmob的市场数据监控应用：从任何一个有一个浏览器的设备上都可以检测到数据</small>
-                                </p>
-                                <h4>响应式设计</h4>
-                                <p class="pui-text-indent">
-                                    随着各种尺寸联网设备的普及，交互界面变得更需要强调适配性，响应式设计也就应运而生。虽然响应式设计并不要求特定风格，但扁平的交互界面显然比其它样式要更容易处理。简约设计的另一种优势就是，能见降低页面重量和缩短加载时间。</p>
-                                <p class="pui-text-center"><img
-                                        src="http://cdc.tencent.com/wp-content/uploads/2014/02/Flat-And-Thin-Are-In_onsiteio_500_mini.jpg"
-                                        class="pui-img-responsive"/></p>
-                                <p class="pui-text-center">
-                                    <small>无重量的响应设计: <a href="http://onsite.io/" target="_blank"
-                                                        class="pui-underline pui-link">OnSite. </a><a
-                                            href="http://media.smashingmagazine.com/wp-content/uploads/2013/09/onsiteio_mini.jpg"
-                                            target="_blank" class="pui-underline pui-link">(大尺寸展示)</a></small>
-                                </p>
-                                <blockquote>
-                                    全文详见：<a href="http://cdc.tencent.com/?p=7951" target="_blank" class="pui-link">http://cdc.tencent.com/?p=7951</a>
-                                </blockquote>
+                                {{ blog.content|safe }}
                                 <a name="comments"></a>
                                 <p class="pui-text-center"><a href="#top" class="pui-btn pui-btn-default">TOP <i
                                         class="fa fa-long-arrow-up" style="margin-top: -5px;"></i></a></p>
