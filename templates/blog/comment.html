@@ -1,141 +1,174 @@
-                        <h4 class="h4">评论列表</h4>
-                        <div class="pui-comment pui-comment-avatar-left pui-unbordered">
-                            <div class="pui-comment-avatar">
-                                <img src="images/2.png" class="pui-img-circle pui-img-xs" />
-                                <p>网友</p>
-                            </div>
-                            <div class="pui-comment-container">
-                                <div class="pui-comment-main pui-comment-arrow-lt">
-                                    <header class="pui-comment-header">
-                                        <div class="pui-comment-title-right">
-                                            #1楼 <a href="javascript:;">赞(18)</a> <a href="javascript:;">反对(0)</a>
-                                        </div>
-                                        <div class="pui-comment-subtitle">评论于 2014-7-12 15:30</div>
-                                    </header>
-                                    <section class="pui-comment-content">
-                                        评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX<br/>评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX<br/>
-                                        评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX<br/>评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX
-                                    </section>
-                                    <div class="pui-comment-foot"><a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a></div>
-                                </div>
-                                <div class="pui-comment-reply">
-                                    <div class="pui-comment pui-comment-avatar-left">
-                                        <div class="pui-comment-arrow"><span></span></div>
-                                        <div class="pui-comment-avatar">
-                                            <img src="images/1.jpg" class="pui-img-circle pui-img-xs" />
-                                            <p>网友</p>
-                                        </div>
-                                        <div class="pui-comment-container">
-                                            <header class="pui-comment-header">
-                                                <div class="pui-comment-title-right">
-                                                    #1楼-1 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
-                                                </div>
-                                                <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
-                                            </header>
-                                            <section class="pui-comment-content">
-                                                介就是回复的内容....
-                                            </section>
-                                            <footer class="pui-comment-foot pui-text-right">
-                                                <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
-                                            </footer>
-                                        </div>
-                                    </div>
-                                    <div class="pui-comment pui-comment-avatar-left">
-                                        <div class="pui-comment-arrow"><span></span></div>
-                                        <div class="pui-comment-avatar">
-                                            <img src="images/3.jpg" class="pui-img-circle pui-img-xs" />
-                                            <p>网友</p>
-                                        </div>
-                                        <div class="pui-comment-container">
-                                            <header class="pui-comment-header">
-                                                <div class="pui-comment-title-right">
-                                                    #1楼-2 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
-                                                </div>
-                                                <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
-                                            </header>
-                                            <section class="pui-comment-content">
-                                                <blockquote>介就是回复的内容....</blockquote>
-                                                <p>介也是回复的内容....</p>
-                                            </section>
-                                            <footer class="pui-comment-foot">
-                                                <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
-                                            </footer>
-                                        </div>
-                                    </div>
-                                </div>
+<h4 class="h4">发布评论</h4>
+<div class="pui-comment pui-comment-avatar-right">
+    {% if user %}
+        <div class="pui-comment-avatar">
+            <img src="images/1.jpg" class="pui-img-circle pui-img-xs"/>
+            <p>{{ user.username }}</p>
+        </div>
+        <div class="pui-comment-container">
+            <div class="pui-comment-main pui-comment-arrow-rt">
+                <form action="" class="commitCommentForm">
+                    <div class="pui-form-group">
+                        <textarea name="commentContent" class="pui-input-border-default"></textarea>
+                        <input value="{{ blog.id }}" name="commentBlog" style="display: none">
+                        <div class="pui-form-group">
+                            <input type="button" value="提交" class="pui-btn pui-btn-primary comment_button"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        请登录后评论
+    {% endif %}
+</div>
+
+
+<h4 class="h4">评论列表</h4>
+{% for comment in comment_list %}
+    <div class="pui-comment pui-comment-avatar-left pui-unbordered">
+        <div class="pui-comment-avatar">
+            <img src="images/2.png" class="pui-img-circle pui-img-xs"/>
+            <p>{{ comment.commentUser }}</p>
+        </div>
+        <div class="pui-comment-container">
+            <div class="pui-comment-main pui-comment-arrow-lt">
+                <header class="pui-comment-header">
+                    <div class="pui-comment-title-right">
+                        #1楼 <a href="javascript:;">赞(18)</a> <a href="javascript:;">反对(0)</a>
+                    </div>
+                    <div class="pui-comment-subtitle">评论于 {{ comment.commentDate |date:'Y-m-d H:m:s' }}</div>
+                </header>
+                <section class="pui-comment-content">
+                    {{ comment.commentContent }}
+                </section>
+                <div class="pui-comment-foot"><a href="javascript:;"
+                                                 class="reply_button">回复</a><a
+                        href="">顶</a><a href="javascript:;">举报</a>
+                    <form action="" class="commitReplyForm" style="display: none;">
+                        <div class="pui-form-group">
+                            <textarea name="commentContent" class="pui-input-border-default"></textarea>
+                            <input value="{{ blog.id }}" name="commentBlog" style="display: none">
+                            <input value="{{ comment.id }}" name="reply" style="display: none">
+                            <div class="pui-form-group">
+                                <input type="button" value="提交" class="pui-btn pui-btn-primary comment_button"/>
                             </div>
                         </div>
-                        <div class="pui-comment pui-comment-avatar-right">
-                            <div class="pui-comment-avatar">
-                                <img src="images/1.jpg" class="pui-img-circle pui-img-xs" />
-                                <p>网友</p>
+                    </form>
+                </div>
+            </div>
+            <div class="pui-comment-reply">
+                <div class="pui-comment pui-comment-avatar-left">
+                    <div class="pui-comment-arrow"><span></span></div>
+                    <div class="pui-comment-avatar">
+                        <img src="images/1.jpg" class="pui-img-circle pui-img-xs"/>
+                        <p>网友</p>
+                    </div>
+                    <div class="pui-comment-container">
+                        <header class="pui-comment-header">
+                            <div class="pui-comment-title-right">
+                                #1楼-1 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
                             </div>
-                            <div class="pui-comment-container">
-                                <div class="pui-comment-main pui-comment-arrow-rt">
-                                    <header class="pui-comment-header">
-                                        <div class="pui-comment-title-right">
-                                            #2 楼 <a href="javascript:;">赞(18)</a> <a href="javascript:;">反对(0)</a>
-                                        </div>
-                                        <div class="pui-comment-subtitle">评论于 2014-7-12 15:30</div>
-                                    </header>
-                                    <section class="pui-comment-content">
-                                        评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX<br/>评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX<br/>
-                                        评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX<br/>评论内容XXXXXXXXXXXXXXXXXXXXXXXXXX
-                                    </section>
-                                    <div class="pui-comment-foot"><a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a></div>
-                                </div>
-                                <div class="pui-comment-reply">
-                                    <div class="pui-comment pui-comment-avatar-left">
-                                        <div class="pui-comment-arrow"><span></span></div>
-                                        <div class="pui-comment-avatar">
-                                            <img src="images/3.jpg" class="pui-img-circle pui-img-xs" />
-                                            <p>网友</p>
-                                        </div>
-                                        <div class="pui-comment-container">
-                                            <header class="pui-comment-header">
-                                                <div class="pui-comment-title-right">
-                                                    #2楼-1 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
-                                                </div>
-                                                <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
-                                            </header>
-                                            <section class="pui-comment-content">
-                                                介就是回复的内容....
-                                            </section>
-                                            <footer class="pui-comment-foot pui-text-right">
-                                                <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
-                                            </footer>
-                                        </div>
-                                    </div>
-                                    <div class="pui-comment pui-comment-avatar-left">
-                                        <div class="pui-comment-arrow"><span></span></div>
-                                        <div class="pui-comment-avatar">
-                                            <img src="images/2.png" class="pui-img-circle pui-img-xs" />
-                                            <p>网友</p>
-                                        </div>
-                                        <div class="pui-comment-container">
-                                            <header class="pui-comment-header">
-                                                <div class="pui-comment-title-right">
-                                                    #2楼-2 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
-                                                </div>
-                                                <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
-                                            </header>
-                                            <section class="pui-comment-content">
-                                                <blockquote>介就是回复的内容....</blockquote>
-                                                <p>介也是回复的内容....</p>
-                                            </section>
-                                            <footer class="pui-comment-foot">
-                                                <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
-                                            </footer>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span
+                                    class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
+                        </header>
+                        <section class="pui-comment-content">
+                            介就是回复的内容....
+                        </section>
+                        <footer class="pui-comment-foot pui-text-right">
+                            <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
+                        </footer>
+                    </div>
+                </div>
+                <div class="pui-comment pui-comment-avatar-left">
+                    <div class="pui-comment-arrow"><span></span></div>
+                    <div class="pui-comment-avatar">
+                        <img src="images/3.jpg" class="pui-img-circle pui-img-xs"/>
+                        <p>网友</p>
+                    </div>
+                    <div class="pui-comment-container">
+                        <header class="pui-comment-header">
+                            <div class="pui-comment-title-right">
+                                #1楼-2 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
                             </div>
-                        </div>
-                        <br/>
-                        <div class="blog-pagination">
-                            <ul class="pui-pagination pui-pagination-bordered pui-pagination-prev-next">
-                                <li><a href="#" class="disabled">上一页</a></li>
-                                <li class="pui-pagination-nav"><span>1 / 15</span></li>
-                                <li><a href="#">下一页</a></li>
-                            </ul>
-                        </div>
+                            <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span
+                                    class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
+                        </header>
+                        <section class="pui-comment-content">
+                            <blockquote>介就是回复的内容....</blockquote>
+                            <p>介也是回复的内容....</p>
+                        </section>
+                        <footer class="pui-comment-foot">
+                            <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br/>
+<div class="blog-pagination">
+    <ul class="pui-pagination pui-pagination-bordered pui-pagination-prev-next">
+        <li><a href="#" class="disabled">上一页</a></li>
+        <li class="pui-pagination-nav"><span>1 / 15</span></li>
+        <li><a href="#">下一页</a></li>
+    </ul>
+</div>
+
+{% block js %}
+    <script type="text/javascript" src="/static/jquery/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript">
+        $(".comment_button").on('click', function () {
+            if ($("textarea").val().trim() != '' && $("textarea").val().trim() != undefined && $("textarea").val().trim() != null) {
+                var data = $(".commitCommentForm").serialize()
+                $.ajax({
+                    url: '/blog/commitComment/',
+                    type: 'post',
+                    data: data,
+                    success: function (result) {
+                        if (result.status) {
+
+                        }
+                    }
+                })
+            } else {
+                layer.msg("请正确填写评论内容")
+            }
+        })
+
+        //回复框的隐藏与显示
+        $('.reply_button').on('click', function () {
+            var dom = $(this).parent().children('.commitReplyForm')
+            if (dom.is(':hidden')) {
+                dom.show()
+            } else {
+                dom.hide()
+            }
+        })
+
+        //提交回复
+        $('.commitReplyForm input[type="button"]').on('click', function () {
+            var form = $(this).parent().parent().parent()
+            var content = $(this).parent().parent().children('textarea')
+            if (content == '' || content == undefined || content == 'null') {
+                layer.msg('请将内容填写完整')
+                return false
+            }
+            var data = form.serialize();
+            $.ajax({
+                url: "/blog/commitComment/",
+                data: data,
+                type: 'POST',
+                success: function (result) {
+                    if (result.status) {
+
+                    }
+                },
+                error: function () {
+
+                }
+            })
+        })
+    </script>
+{% endblock %}

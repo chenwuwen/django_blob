@@ -1,6 +1,7 @@
 # -*-coding:utf-8-*-
 import json
 
+import collections
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
@@ -33,13 +34,18 @@ pk字段同样也支持跨模型的查询，比如下面的三种写法，效果
 class ReadBlog(View):
     def get(self, request, blog_id):
         blog = Blog.objects.get(pk=blog_id)
-        comment_list = blog.blogcomment_set.all()
-        comment_count = 0
-        for comment in comment_list:
-            if not comment.reply:  # 如果回复id不为Null
-                comment_count += 1
+        user = None
+        try:
+            user = request.session['user']
+        except Exception as e:
+            print("未登录")
+            print(e)
+        finally:
+            pass
+        comment_query_set = blog.blogcomment_set.all()
+        comment_list, comment_count = build_tree(comment_query_set)
         return render(request, "blog/view.html",
-                      {'blog': blog, 'comment_count': comment_count, 'comment_list': comment_list})
+                      {'blog': blog, 'comment_count': comment_count, 'comment_list': comment_list, 'user': user})
 
 
 # 写博客
@@ -70,3 +76,33 @@ class WriteBlog(View):
         else:
             response.message(result.errors.as_json())
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
+
+
+def tree_search(comment_list, comment_obj):
+    # 在comment_dic中一个一个的寻找其回复的评论
+    # 检查当前评论的 reply_id 和 comment_dic中已有评论的nid是否相同，
+    # 如果相同，表示就是回复的此信息
+    # 如果不同，则需要去 comment_dic 的所有子元素中寻找，一直找，如果一系列中未找，则继续向下找
+    for k, v in comment_list.items():
+        # 找回复的评论，将自己添加到其对应的字典中，例如： {评论一： {回复一：{},回复二：{}}}
+        if k == comment_obj.reply:
+            comment_list[k][comment_obj] = collections.OrderedDict()
+            return
+        else:
+            # 在当前第一个跟元素中递归的去寻找父亲
+            tree_search(comment_list[k], comment_obj)
+
+
+def build_tree(comment_query_set):
+    # 字典是无序的,但是collections的OrderedDict类为我们提供了一个有序的字典结构(它记录了每个键值对添加的顺序,但是如果初始化的时候同时传入多个参数，它们的顺序是随机的，不会按照位置顺序存储）
+    comment_list = collections.OrderedDict()
+    comment_count = 0
+    for comment_obj in comment_query_set:
+        if comment_obj.reply is None:
+            comment_count += 1
+            # 如果是根评论，添加到comment_dic[评论对象] ＝ {}
+            comment_list[comment_obj.id] = collections.OrderedDict()
+        else:
+            # 如果是回复的评论，则需要在 comment_dic 中找到其回复的评论
+            tree_search(comment_list, comment_obj)
+    return comment_list, comment_count,

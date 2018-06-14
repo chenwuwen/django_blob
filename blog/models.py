@@ -61,8 +61,8 @@ class BlogComment(models.Model):
 
     id = models.AutoField(primary_key=True)
     commentContent = models.CharField(max_length=255, verbose_name="评论内容")
-    commentBlog = models.ManyToManyField(to='Blog', verbose_name="被评论博客", max_length=20)
-    commentUser = models.ManyToManyField(to='user.User', verbose_name="评论人", max_length=20)
+    commentBlog = models.ForeignKey(to='Blog', verbose_name="被评论博客", on_delete="CASCADE", max_length=20)
+    commentUser = models.ForeignKey(to='user.User', verbose_name="评论人", on_delete="CASCADE", max_length=20)
     commentDate = models.DateTimeField(auto_now_add=True, verbose_name="评论时间")
     reply = models.ForeignKey(to='self', to_field='id', verbose_name="回复ID", on_delete="CASCADE", null=True)
 
@@ -73,8 +73,8 @@ class BlogCollect(models.Model):
         verbose_name_plural = "博客收藏表"
 
     id = models.AutoField(primary_key=True)
-    collectBlog = models.ManyToManyField(to='Blog', verbose_name="被收藏博客", max_length=20)
-    collectUser = models.ManyToManyField(to='user.User', verbose_name="收藏人", max_length=20)
+    collectBlog = models.ForeignKey(to='Blog', verbose_name="被收藏博客", on_delete="CASCADE", max_length=20)
+    collectUser = models.ForeignKey(to='user.User', verbose_name="收藏人", on_delete="CASCADE", max_length=20)
     collectBlogDate = models.DateField(auto_now_add=True, verbose_name="收藏时间")
 
 
