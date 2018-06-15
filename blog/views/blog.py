@@ -43,9 +43,23 @@ class ReadBlog(View):
         finally:
             pass
         comment_query_set = blog.blogcomment_set.all()
-        comment_list, comment_count = build_tree(comment_query_set)
+        # QuerySet转换为List有两种方法 1：values返回是字典列表[{},{}],2:values_list返回的是元组列表 [(),()] values_list加上 flat=True 之后返回值列表
+        comment_query_list = blog.blogcomment_set.all().values()
+        print(len(comment_query_set))
+        comment_tree = []
+        comment_list_dict = {}
+        for row in comment_query_list:
+            row.update({'children': []})
+            comment_list_dict[row['id']] = row
+        for item in comment_query_list:
+            parent_row = comment_list_dict.get(item['reply'])
+            if not parent_row:
+                comment_tree.append(item)
+            else:
+                parent_row['children'].append(item)
+        comment_dic, comment_count = build_tree(comment_query_set)
         return render(request, "blog/view.html",
-                      {'blog': blog, 'comment_count': comment_count, 'comment_list': comment_list, 'user': user})
+                      {'blog': blog, 'comment_count': comment_count, 'comment_dic': comment_dic, 'user': user})
 
 
 # 写博客
@@ -77,32 +91,38 @@ class WriteBlog(View):
             response.message(result.errors.as_json())
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
 
+"""
+博客评论中,有评论和回复,可以使用递归来处理,先把数据通过有序字典(即：collections.OrderedDict()),key为对象,value为有序字典,依次类推!
 
-def tree_search(comment_list, comment_obj):
+"""
+
+def tree_search(comment_dic, comment_obj):
     # 在comment_dic中一个一个的寻找其回复的评论
     # 检查当前评论的 reply_id 和 comment_dic中已有评论的nid是否相同，
     # 如果相同，表示就是回复的此信息
     # 如果不同，则需要去 comment_dic 的所有子元素中寻找，一直找，如果一系列中未找，则继续向下找
-    for k, v in comment_list.items():
-        # 找回复的评论，将自己添加到其对应的字典中，例如： {评论一： {回复一：{},回复二：{}}}
-        if k == comment_obj.reply:
-            comment_list[k][comment_obj] = collections.OrderedDict()
+    for k, v in comment_dic.items():
+        # 找回复的评论，将自己添加到其对应的字典中，例如： {评论一： {回复一：{},回复二：{}}} 这里没有使用comment_obj.reply是因为comment_obj.reply也是一个BlogComment对象实例
+        if k.id == comment_obj.reply.id:
+            comment_dic[k][comment_obj] = collections.OrderedDict()
+            print(comment_dic)
             return
         else:
-            # 在当前第一个跟元素中递归的去寻找父亲
-            tree_search(comment_list[k], comment_obj)
+            # 在当前第一个根元素中递归的去寻找父亲
+            tree_search(comment_dic[k], comment_obj)
 
 
 def build_tree(comment_query_set):
     # 字典是无序的,但是collections的OrderedDict类为我们提供了一个有序的字典结构(它记录了每个键值对添加的顺序,但是如果初始化的时候同时传入多个参数，它们的顺序是随机的，不会按照位置顺序存储）
-    comment_list = collections.OrderedDict()
+    comment_dic = collections.OrderedDict()
     comment_count = 0
     for comment_obj in comment_query_set:
         if comment_obj.reply is None:
             comment_count += 1
             # 如果是根评论，添加到comment_dic[评论对象] ＝ {}
-            comment_list[comment_obj.id] = collections.OrderedDict()
+            comment_dic[comment_obj] = collections.OrderedDict()
+            print(comment_dic)
         else:
             # 如果是回复的评论，则需要在 comment_dic 中找到其回复的评论
-            tree_search(comment_list, comment_obj)
-    return comment_list, comment_count,
+            tree_search(comment_dic, comment_obj)
+    return comment_dic, comment_count,

@@ -25,11 +25,11 @@
 
 
 <h4 class="h4">评论列表</h4>
-{% for comment in comment_list %}
+{% for k , v in comment_dic %}
     <div class="pui-comment pui-comment-avatar-left pui-unbordered">
         <div class="pui-comment-avatar">
             <img src="images/2.png" class="pui-img-circle pui-img-xs"/>
-            <p>{{ comment.commentUser }}</p>
+            <p>{{ k.commentUser }}</p>
         </div>
         <div class="pui-comment-container">
             <div class="pui-comment-main pui-comment-arrow-lt">
@@ -40,7 +40,7 @@
                     <div class="pui-comment-subtitle">评论于 {{ comment.commentDate |date:'Y-m-d H:m:s' }}</div>
                 </header>
                 <section class="pui-comment-content">
-                    {{ comment.commentContent }}
+                    {{ k.commentContent }}
                 </section>
                 <div class="pui-comment-foot"><a href="javascript:;"
                                                  class="reply_button">回复</a><a
@@ -57,29 +57,8 @@
                     </form>
                 </div>
             </div>
+            {% if not v %}
             <div class="pui-comment-reply">
-                <div class="pui-comment pui-comment-avatar-left">
-                    <div class="pui-comment-arrow"><span></span></div>
-                    <div class="pui-comment-avatar">
-                        <img src="images/1.jpg" class="pui-img-circle pui-img-xs"/>
-                        <p>网友</p>
-                    </div>
-                    <div class="pui-comment-container">
-                        <header class="pui-comment-header">
-                            <div class="pui-comment-title-right">
-                                #1楼-1 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>
-                            </div>
-                            <div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span
-                                    class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div>
-                        </header>
-                        <section class="pui-comment-content">
-                            介就是回复的内容....
-                        </section>
-                        <footer class="pui-comment-foot pui-text-right">
-                            <a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a>
-                        </footer>
-                    </div>
-                </div>
                 <div class="pui-comment pui-comment-avatar-left">
                     <div class="pui-comment-arrow"><span></span></div>
                     <div class="pui-comment-avatar">
@@ -104,6 +83,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 {% endfor %}
