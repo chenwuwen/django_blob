@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # 会话框架
     'django.contrib.messages',  # 消息框架
     'django.contrib.staticfiles',  # 管理静态文件的框架
+    'common',
     'user',
     'blog'
 ]
@@ -64,6 +65,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
+
     },
 ]
 
@@ -167,4 +169,3 @@ LOGIN_URL = '/user/login'
 STATICFILES_DIRS = (
     (os.path.join(BASE_DIR, 'static/')),
 )
-

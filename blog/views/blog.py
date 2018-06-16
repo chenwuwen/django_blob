@@ -52,14 +52,14 @@ class ReadBlog(View):
             row.update({'children': []})
             comment_list_dict[row['id']] = row
         for item in comment_query_list:
-            parent_row = comment_list_dict.get(item['reply'])
+            parent_row = comment_list_dict.get(item['reply_id'])
             if not parent_row:
                 comment_tree.append(item)
             else:
                 parent_row['children'].append(item)
         comment_dic, comment_count = build_tree(comment_query_set)
         return render(request, "blog/view.html",
-                      {'blog': blog, 'comment_count': comment_count, 'comment_dic': comment_dic, 'user': user})
+                      {'blog': blog, 'comment_count': comment_count, 'comment_tree': comment_tree, 'user': user})
 
 
 # 写博客
