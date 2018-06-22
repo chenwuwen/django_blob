@@ -43,8 +43,11 @@ class ReadBlog(View):
         finally:
             pass
         comment_query_set = blog.blogcomment_set.all()
+
         # QuerySet转换为List有两种方法 1：values返回是字典列表[{},{}],2:values_list返回的是元组列表 [(),()] values_list加上 flat=True 之后返回值列表
-        comment_query_list = blog.blogcomment_set.all().values()
+        # 此处不使用该方法是因为,它会将对象转换为id,所以进行手动的转换
+        # comment_query_list = blog.blogcomment_set.all().values()
+        comment_query_list = transform_comment(comment_query_set)
         print(len(comment_query_set))
         comment_tree = []
         comment_list_dict = {}
@@ -58,6 +61,7 @@ class ReadBlog(View):
             else:
                 parent_row['children'].append(item)
         comment_dic, comment_count = build_tree(comment_query_set)
+        print(comment_tree)
         return render(request, "blog/view.html",
                       {'blog': blog, 'comment_count': comment_count, 'comment_tree': comment_tree, 'user': user})
 
@@ -91,10 +95,12 @@ class WriteBlog(View):
             response.message(result.errors.as_json())
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
 
+
 """
 博客评论中,有评论和回复,可以使用递归来处理,先把数据通过有序字典(即：collections.OrderedDict()),key为对象,value为有序字典,依次类推!
 
 """
+
 
 def tree_search(comment_dic, comment_obj):
     # 在comment_dic中一个一个的寻找其回复的评论
@@ -126,3 +132,32 @@ def build_tree(comment_query_set):
             # 如果是回复的评论，则需要在 comment_dic 中找到其回复的评论
             tree_search(comment_dic, comment_obj)
     return comment_dic, comment_count,
+
+
+def build_tree2(comment_query_set):
+    comment_tree = []
+    comment_list_dict = {}
+    for comment_obj in comment_query_set:
+        comment_obj.update({'children': []})
+        comment_list_dict[comment_obj.id] = comment_obj
+    for item in comment_query_set:
+        parent_row = comment_list_dict.get(comment_obj.reply)
+        if not parent_row:
+            comment_tree.append(item)
+        else:
+            parent_row['children'].append(item)
+    return comment_tree
+
+
+def transform_comment(comment_query_set):
+    comment_query_list = []
+    for comment_obj in comment_query_set:
+        comment_dic = {}
+        comment_dic['id'] = comment_obj.id
+        comment_dic['commentContent'] = comment_obj.commentContent
+        comment_dic['commentBlog'] = comment_obj.commentBlog
+        comment_dic['commentUser'] = comment_obj.commentUser
+        comment_dic['commentDate'] = comment_obj.commentDate
+        comment_dic['reply'] = comment_obj.reply
+        comment_query_list.append(comment_dic)
+    return comment_query_list
