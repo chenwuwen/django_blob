@@ -1,4 +1,5 @@
 # -*-coding:utf-8-*-
+import datetime, time
 import json
 
 import collections
@@ -47,20 +48,9 @@ class ReadBlog(View):
         # QuerySet转换为List有两种方法 1：values返回是字典列表[{},{}],2:values_list返回的是元组列表 [(),()] values_list加上 flat=True 之后返回值列表
         # 此处不使用该方法是因为,它会将对象转换为id,所以进行手动的转换
         # comment_query_list = blog.blogcomment_set.all().values()
-        comment_query_list = transform_comment(comment_query_set)
+        comment_query_list, comment_count = transform_comment(comment_query_set)
         print(len(comment_query_set))
-        comment_tree = []
-        comment_list_dict = {}
-        for row in comment_query_list:
-            row.update({'children': []})
-            comment_list_dict[row['id']] = row
-        for item in comment_query_list:
-            parent_row = comment_list_dict.get(item['reply_id'])
-            if not parent_row:
-                comment_tree.append(item)
-            else:
-                parent_row['children'].append(item)
-        comment_dic, comment_count = build_tree(comment_query_set)
+        comment_tree = build_tree(comment_query_list)
         print(comment_tree)
         return render(request, "blog/view.html",
                       {'blog': blog, 'comment_count': comment_count, 'comment_tree': comment_tree, 'user': user})
@@ -102,46 +92,46 @@ class WriteBlog(View):
 """
 
 
-def tree_search(comment_dic, comment_obj):
-    # 在comment_dic中一个一个的寻找其回复的评论
-    # 检查当前评论的 reply_id 和 comment_dic中已有评论的nid是否相同，
-    # 如果相同，表示就是回复的此信息
-    # 如果不同，则需要去 comment_dic 的所有子元素中寻找，一直找，如果一系列中未找，则继续向下找
-    for k, v in comment_dic.items():
-        # 找回复的评论，将自己添加到其对应的字典中，例如： {评论一： {回复一：{},回复二：{}}} 这里没有使用comment_obj.reply是因为comment_obj.reply也是一个BlogComment对象实例
-        if k.id == comment_obj.reply.id:
-            comment_dic[k][comment_obj] = collections.OrderedDict()
-            print(comment_dic)
-            return
-        else:
-            # 在当前第一个根元素中递归的去寻找父亲
-            tree_search(comment_dic[k], comment_obj)
+# def tree_search(comment_dic, comment_obj):
+#     # 在comment_dic中一个一个的寻找其回复的评论
+#     # 检查当前评论的 reply_id 和 comment_dic中已有评论的nid是否相同，
+#     # 如果相同，表示就是回复的此信息
+#     # 如果不同，则需要去 comment_dic 的所有子元素中寻找，一直找，如果一系列中未找，则继续向下找
+#     for k, v in comment_dic.items():
+#         # 找回复的评论，将自己添加到其对应的字典中，例如： {评论一： {回复一：{},回复二：{}}} 这里没有使用comment_obj.reply是因为comment_obj.reply也是一个BlogComment对象实例
+#         if k.id == comment_obj.reply.id:
+#             comment_dic[k][comment_obj] = collections.OrderedDict()
+#             print(comment_dic)
+#             return
+#         else:
+#             # 在当前第一个根元素中递归的去寻找父亲
+#             tree_search(comment_dic[k], comment_obj)
 
 
-def build_tree(comment_query_set):
-    # 字典是无序的,但是collections的OrderedDict类为我们提供了一个有序的字典结构(它记录了每个键值对添加的顺序,但是如果初始化的时候同时传入多个参数，它们的顺序是随机的，不会按照位置顺序存储）
-    comment_dic = collections.OrderedDict()
-    comment_count = 0
-    for comment_obj in comment_query_set:
-        if comment_obj.reply is None:
-            comment_count += 1
-            # 如果是根评论，添加到comment_dic[评论对象] ＝ {}
-            comment_dic[comment_obj] = collections.OrderedDict()
-            print(comment_dic)
-        else:
-            # 如果是回复的评论，则需要在 comment_dic 中找到其回复的评论
-            tree_search(comment_dic, comment_obj)
-    return comment_dic, comment_count,
+# def build_tree(comment_query_set):
+#     # 字典是无序的,但是collections的OrderedDict类为我们提供了一个有序的字典结构(它记录了每个键值对添加的顺序,但是如果初始化的时候同时传入多个参数，它们的顺序是随机的，不会按照位置顺序存储）
+#     comment_dic = collections.OrderedDict()
+#     comment_count = 0
+#     for comment_obj in comment_query_set:
+#         if comment_obj.reply is None:
+#             comment_count += 1
+#             # 如果是根评论，添加到comment_dic[评论对象] ＝ {}
+#             comment_dic[comment_obj] = collections.OrderedDict()
+#             print(comment_dic)
+#         else:
+#             # 如果是回复的评论，则需要在 comment_dic 中找到其回复的评论
+#             tree_search(comment_dic, comment_obj)
+#     return comment_dic, comment_count,
 
 
-def build_tree2(comment_query_set):
+def build_tree(comment_query_list):
     comment_tree = []
     comment_list_dict = {}
-    for comment_obj in comment_query_set:
-        comment_obj.update({'children': []})
-        comment_list_dict[comment_obj.id] = comment_obj
-    for item in comment_query_set:
-        parent_row = comment_list_dict.get(comment_obj.reply)
+    for row in comment_query_list:
+        row.update({'children': []})
+        comment_list_dict[row['id']] = row
+    for item in comment_query_list:
+        parent_row = comment_list_dict.get(item['reply'])
         if not parent_row:
             comment_tree.append(item)
         else:
@@ -151,13 +141,24 @@ def build_tree2(comment_query_set):
 
 def transform_comment(comment_query_set):
     comment_query_list = []
+    comment_count = 0
     for comment_obj in comment_query_set:
         comment_dic = {}
         comment_dic['id'] = comment_obj.id
         comment_dic['commentContent'] = comment_obj.commentContent
-        comment_dic['commentBlog'] = comment_obj.commentBlog
-        comment_dic['commentUser'] = comment_obj.commentUser
-        comment_dic['commentDate'] = comment_obj.commentDate
-        comment_dic['reply'] = comment_obj.reply
+        comment_dic['commentBlog'] = comment_obj.commentBlog.id
+        comment_dic['commentUser'] = comment_obj.commentUser.username
+        now = time.time()
+        if (now - time.mktime(comment_obj.commentDate.timetuple())) > (2 * 60 * 1000 * 1000):
+            comment_dic['commentDate'] = comment_obj.commentDate.strftime("%Y-%m-%d %H:%M")  # 日期转化为字符串
+        else:
+            comment_dic['commentDate'] = '刚刚'
+        if comment_obj.reply:  # 如果回复不为None
+            # comment_dic['reply_src_content'] = comment_obj.reply.commentContent
+            # comment_dic['reply_src_user'] = comment_obj.reply.commentUser.username
+            comment_dic['reply'] = comment_obj.reply
+        else:
+            comment_count += 1
+            comment_dic['reply'] = comment_obj.reply
         comment_query_list.append(comment_dic)
-    return comment_query_list
+    return comment_query_list, comment_count
