@@ -19,13 +19,14 @@ register = template.Library()
 @register.simple_tag  # 加上这句后我就是一名合格的template tags
 def comment_tree(comments):
     root_comment_html = ''
-    for comment in comments:
+    for index, comment in enumerate(comments, 1):
         html = '<div class="pui-comment pui-comment-avatar-left pui-unbordered"><div class="pui-comment-avatar">'
         html += '<img src="images/2.png" class="pui-img-circle pui-img-xs"/><p>'
         html += comment['commentUser']
         html += '</p></div>'
         html += '<div class="pui-comment-container"> <div class="pui-comment-main pui-comment-arrow-lt"><header class="pui-comment-header">'
-        html += '<div class="pui-comment-title-right"> #1楼 <a href="javascript:;">赞(18)</a> <a href="javascript:;">反对(0)</a>'
+        html += '<div class="pui-comment-title-right"> #%s楼 <a href="javascript:;">赞(18)</a> <a href="javascript:;">反对(0)</a>' % (
+            index)
         html += '</div>'
         html += '<div class="pui-comment-subtitle">评论于'
         html += comment['commentDate']
@@ -34,19 +35,19 @@ def comment_tree(comments):
         html += '<section class="pui-comment-content">'
         html += comment['commentContent']
         html += '</section>'
-        html += '<div class="pui-comment-foot"><a href="javascript:;" class="reply_button">回复</a><ahref="">顶</a><a href="javascript:;">举报</a>'
+        html += '<div class="pui-comment-foot"><a href="javascript:;" class="reply_button">回复</a><a href="">顶</a><a href="javascript:;">举报</a>'
         html += ' <form action="" class="commitReplyForm" style="display: none;">'
         html += ' <div class="pui-form-group">'
         html += '<textarea name="commentContent" class="pui-input-border-default"></textarea>'
-        html += '<input value="{{ blog.id }}" name="commentBlog" style="display: none">'
-        html += '<input value="{{ comment.id }}" name="reply" style="display: none">'
+        html += '<input value="%s" name="commentBlog" style="display: none">' % (comment['commentBlog'])
+        html += '<input value="%s" name="reply" style="display: none">' % (comment['id'])
         html += '<div class="pui-form-group"><input type="button" value="提交" class="pui-btn pui-btn-primary comment_button"/></div>'
         html += '</div>'
         html += '</form>'
         html += '</div>'
         html += '</div>'
 
-        html += recursion(comment['children'])
+        html += recursion(comment['children'], index)
 
         html += '</div>'
         html += '</div>'
@@ -57,23 +58,24 @@ def comment_tree(comments):
 
 # 评论回复
 @register.simple_tag
-def recursion(comment_reply_list):
+def recursion(comment_reply_list, root_index):
     leaf_comment_html = ''
-    for reply in comment_reply_list:
-
+    for index, reply in enumerate(comment_reply_list, 1):
         leaf_html = ' <div class="pui-comment-reply"><div class="pui-comment pui-comment-avatar-left"><div class="pui-comment-arrow"><span></span></div><div class="pui-comment-avatar">'
         leaf_html += '<img src="images/3.jpg" class="pui-img-circle pui-img-xs"/><p>'
         leaf_html += reply['commentUser']
         leaf_html += '</p> </div>'
         leaf_html += '<div class="pui-comment-container"> <header class="pui-comment-header"><div class="pui-comment-title-right">'
-        leaf_html += ' #1楼-2 <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>'
-        leaf_html += '</div><div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@某某某</a> <span class="pui-comment-reply-time">回复于2014-7-12 15:30</span></div></header>'
-        leaf_html += '<section class="pui-comment-content"><blockquote>介就是回复的内容....</blockquote><p>%s</p></section>' %(reply['commentContent'])
+        leaf_html += ' #%s楼-%s <a href="javascript:;">赞(1)</a> <a href="javascript:;">反对(18)</a>' % (root_index, index)
+        leaf_html += '</div><div class="pui-comment-subtitle"><a href="javascript:;" class="pui-link">@%s</a> <span class="pui-comment-reply-time">回复于 %s</span></div></header>' % (
+            reply['reply_src_user'], reply['commentDate'])
+        leaf_html += '<section class="pui-comment-content"><blockquote> %s </blockquote><p> %s </p></section>' % (
+            reply['reply_src_content'], reply['commentContent'])
         leaf_html += '<footer class="pui-comment-foot"><a href="javascript:;">回复</a><a href="">顶</a><a href="javascript:;">举报</a></footer>'
         leaf_html += '</div>'
         leaf_html += '</div>'
         leaf_html += '</div>'
-        leaf_html += recursion(reply['children'])
+        leaf_html += recursion(reply['children'], root_index)
 
         leaf_comment_html += leaf_html
 

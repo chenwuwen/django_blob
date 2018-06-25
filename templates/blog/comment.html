@@ -59,7 +59,8 @@
 
         //回复框的隐藏与显示
         $('.reply_button').on('click', function () {
-            var dom = $(this).parent().children('.commitReplyForm')
+{#            找到当前元素的 class 类名为commitReplyForm 的兄弟元素#}
+            var dom = $(this).siblings('.commitReplyForm')
             if (dom.is(':hidden')) {
                 dom.show()
             } else {

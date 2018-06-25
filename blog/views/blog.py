@@ -124,6 +124,7 @@ class WriteBlog(View):
 #     return comment_dic, comment_count,
 
 
+# 拼装 comment 数据
 def build_tree(comment_query_list):
     comment_tree = []
     comment_list_dict = {}
@@ -139,24 +140,25 @@ def build_tree(comment_query_list):
     return comment_tree
 
 
+# 转换评论由query_set转换为 list 包含 字典
 def transform_comment(comment_query_set):
     comment_query_list = []
     comment_count = 0
+    now = time.time()
     for comment_obj in comment_query_set:
         comment_dic = {}
         comment_dic['id'] = comment_obj.id
         comment_dic['commentContent'] = comment_obj.commentContent
         comment_dic['commentBlog'] = comment_obj.commentBlog.id
         comment_dic['commentUser'] = comment_obj.commentUser.username
-        now = time.time()
-        if (now - time.mktime(comment_obj.commentDate.timetuple())) > (2 * 60 * 1000 * 1000):
+        if (now - time.mktime(comment_obj.commentDate.timetuple())) < (2 * 60 * 1000 * 1000):  # 判断回复时间与当前时间是否大于两个小时
             comment_dic['commentDate'] = comment_obj.commentDate.strftime("%Y-%m-%d %H:%M")  # 日期转化为字符串
         else:
             comment_dic['commentDate'] = '刚刚'
         if comment_obj.reply:  # 如果回复不为None
-            # comment_dic['reply_src_content'] = comment_obj.reply.commentContent
-            # comment_dic['reply_src_user'] = comment_obj.reply.commentUser.username
-            comment_dic['reply'] = comment_obj.reply
+            comment_dic['reply_src_content'] = comment_obj.reply.commentContent
+            comment_dic['reply_src_user'] = comment_obj.reply.commentUser.username
+            comment_dic['reply'] = comment_obj.reply.id
         else:
             comment_count += 1
             comment_dic['reply'] = comment_obj.reply
