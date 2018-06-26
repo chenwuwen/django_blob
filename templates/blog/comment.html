@@ -59,7 +59,7 @@
 
         //回复框的隐藏与显示
         $('.reply_button').on('click', function () {
-{#            找到当前元素的 class 类名为commitReplyForm 的兄弟元素#}
+            {#            找到当前元素的 class 类名为commitReplyForm 的兄弟元素#}
             var dom = $(this).siblings('.commitReplyForm')
             if (dom.is(':hidden')) {
                 dom.show()
@@ -76,6 +76,7 @@
                 layer.msg('请将内容填写完整')
                 return false
             }
+            $(this).attr('disabled', 'disabled')
             var data = form.serialize();
             $.ajax({
                 url: "/blog/commitComment/",
@@ -83,7 +84,9 @@
                 type: 'POST',
                 success: function (result) {
                     if (result.status) {
-
+                        $(this).parent().parent().children('textarea').val("")
+                        $(this).removeAttr('disabled')
+                        form.hide()
                     }
                 },
                 error: function () {

@@ -35,6 +35,7 @@ pk字段同样也支持跨模型的查询，比如下面的三种写法，效果
 class ReadBlog(View):
     def get(self, request, blog_id):
         blog = Blog.objects.get(pk=blog_id)
+
         user = None
         try:
             user = request.session['user']
@@ -49,7 +50,6 @@ class ReadBlog(View):
         # 此处不使用该方法是因为,它会将对象转换为id,所以进行手动的转换
         # comment_query_list = blog.blogcomment_set.all().values()
         comment_query_list, comment_count = transform_comment(comment_query_set)
-        print(len(comment_query_set))
         comment_tree = build_tree(comment_query_list)
         print(comment_tree)
         return render(request, "blog/view.html",
@@ -144,17 +144,17 @@ def build_tree(comment_query_list):
 def transform_comment(comment_query_set):
     comment_query_list = []
     comment_count = 0
-    now = time.time()
+    now = lambda: round(time.time())  # 默认是秒级的时间戳,获得毫秒级的时间戳 round(time.time() * 1000) 或者使用lambda表达式lambda: time.time()*1000 如果使用lambda表达式,那么使用now这个变量是需要加括号，也就是用 now() , round() 方法返回浮点数x的四舍五入值
     for comment_obj in comment_query_set:
         comment_dic = {}
         comment_dic['id'] = comment_obj.id
         comment_dic['commentContent'] = comment_obj.commentContent
         comment_dic['commentBlog'] = comment_obj.commentBlog.id
         comment_dic['commentUser'] = comment_obj.commentUser.username
-        if (now - time.mktime(comment_obj.commentDate.timetuple())) < (2 * 60 * 1000 * 1000):  # 判断回复时间与当前时间是否大于两个小时
-            comment_dic['commentDate'] = comment_obj.commentDate.strftime("%Y-%m-%d %H:%M")  # 日期转化为字符串
-        else:
+        if (now() - round(time.mktime(comment_obj.commentDate.timetuple()))) < (2 * 60 * 60):  # 判断回复时间与当前时间是否大于两个小时,mktime() 默认返回秒级的浮点数
             comment_dic['commentDate'] = '刚刚'
+        else:
+            comment_dic['commentDate'] = comment_obj.commentDate.strftime("%Y-%m-%d %H:%M")  # 日期转化为字符串
         if comment_obj.reply:  # 如果回复不为None
             comment_dic['reply_src_content'] = comment_obj.reply.commentContent
             comment_dic['reply_src_user'] = comment_obj.reply.commentUser.username

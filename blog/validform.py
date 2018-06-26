@@ -55,16 +55,20 @@ class CommentForm(forms.Form):
             # todo 此处还可以判断该博客ID是否存在，是否为有效状态
             return self.cleaned_data['commentBlog']
         else:
-            raise ValidationError(message='内容不合法', code='invalid')
+            raise ValidationError(message='评论博客不存在', code='invalid')
 
     def clean_reply(self):
         comment_id = self.cleaned_data['reply']
-        if isinstance(comment_id, int):
-            comment = BlogComment.objects.get(pk=comment_id)
-            self.cleaned_data['reply'] = comment
-            return self.cleaned_data['reply']
-        else:
-            raise ValidationError(message='内容不合法', code='invalid')
+        if comment_id:
+            if isinstance(comment_id, int):
+                comment = BlogComment.objects.get(pk=comment_id)
+                if comment:
+                    self.cleaned_data['reply'] = comment
+                    return self.cleaned_data['reply']
+                else:
+                    raise ValidationError(message='回复ID不存在', code='invalid')
+            else:
+                raise ValidationError(message='回复ID不存在', code='invalid')
 
 
 def clean(self):

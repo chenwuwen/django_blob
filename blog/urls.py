@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.urls import path
 
-from blog.views import index, blog, comment
+from blog.views import index, blog, comment, blog_extend
 
 urlpatterns = [
     path('index/', index.Index.as_view()),
     path('read_blog/<int:blog_id>', blog.ReadBlog.as_view()),
     path('write_blog/', blog.WriteBlog.as_view()),
     path('commitComment/', comment.commitComment.as_view()),
+    path('add_read_count/<int:blog_id>', blog_extend.add_read_count.as_view()),
+    path('add_favor_count/<int:blog_id>', blog_extend.add_favor_count.as_view()),
 
 ]

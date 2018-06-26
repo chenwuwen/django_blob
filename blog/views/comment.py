@@ -28,5 +28,5 @@ class commitComment(View):
             response.status = True
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
         else:
-            response.message(result.errors.as_json())
+            response.message(result.errors.as_data())
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
