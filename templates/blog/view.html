@@ -76,6 +76,8 @@
 {% endblock %}
 {% block js %}
     <script type="text/javascript" src="/static/assets/js/index.js"></script>
+    <script type="text/javascript"> blog_id = '{{ blog.id }}';</script>      <!-- 引入全局变量将blog_id引入下面的js文件 -->
+    <script type="text/javascript" src="/static/assets/js/read_count.js"></script>
     <script>window._bd_share_config = {
         "common": {
             "bdSnsKey": {},
