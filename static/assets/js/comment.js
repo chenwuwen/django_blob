@@ -70,6 +70,7 @@ function getComment() {
         success: function (ret) {
             if (ret.status) {
                 var dom = comment_tree(ret.data)
+                console.log(dom)
                 $("#comment_view_area").html(dom)
             }
         },
