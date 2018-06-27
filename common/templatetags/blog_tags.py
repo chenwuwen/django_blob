@@ -67,7 +67,6 @@ def recursion(comment_reply_list, root_index):
         leaf_html += '<section class="pui-comment-content"><blockquote> %s </blockquote><p> %s </p></section>' % (
             reply['reply_src_content'], reply['commentContent'])
         leaf_html += '<footer class="pui-comment-foot"><a href="javascript:;" class="reply_button" >回复</a><a href="">顶</a><a href="javascript:;">举报</a>'
-
         leaf_html += '<form action="" class="commitReplyForm" style="display: none;">'
         leaf_html += '<div class="pui-form-group">'
         leaf_html += '<textarea name="commentContent" class="pui-input-border-default"></textarea>'

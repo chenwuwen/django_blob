@@ -26,7 +26,9 @@
 
 
 <h4 class="h4">评论列表</h4>
-{% comment_tree comment_tree %}
+<div id="comment_view_area">
+    {% comment_tree comment_tree %}
+</div>
 <br/>
 <div class="blog-pagination">
     <ul class="pui-pagination pui-pagination-bordered pui-pagination-prev-next">
@@ -38,61 +40,6 @@
 
 {% block js %}
     <script type="text/javascript" src="/static/jquery/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript">
-        $(".comment_button").on('click', function () {
-            if ($("textarea").val().trim() != '' && $("textarea").val().trim() != undefined && $("textarea").val().trim() != null) {
-                var data = $(".commitCommentForm").serialize()
-                $.ajax({
-                    url: '/blog/commitComment/',
-                    type: 'post',
-                    data: data,
-                    success: function (result) {
-                        if (result.status) {
-
-                        }
-                    }
-                })
-            } else {
-                layer.msg("请正确填写评论内容")
-            }
-        })
-
-        //回复框的隐藏与显示
-        $('.reply_button').on('click', function () {
-            {#            找到当前元素的 class 类名为commitReplyForm 的兄弟元素#}
-            var dom = $(this).siblings('.commitReplyForm')
-            if (dom.is(':hidden')) {
-                dom.show()
-            } else {
-                dom.hide()
-            }
-        })
-
-        //提交回复
-        $('.commitReplyForm input[type="button"]').on('click', function () {
-            var form = $(this).parent().parent().parent()
-            var content = $(this).parent().parent().children('textarea')
-            if (content == '' || content == undefined || content == 'null') {
-                layer.msg('请将内容填写完整')
-                return false
-            }
-            $(this).attr('disabled', 'disabled')
-            var data = form.serialize();
-            $.ajax({
-                url: "/blog/commitComment/",
-                data: data,
-                type: 'POST',
-                success: function (result) {
-                    if (result.status) {
-                        $(this).parent().parent().children('textarea').val("")
-                        $(this).removeAttr('disabled')
-                        form.hide()
-                    }
-                },
-                error: function () {
-
-                }
-            })
-        })
-    </script>
+    <script type="text/javascript">blog_id ={{ blog.id }};</script>
+    <script type="text/javascript" src="/static/assets/js/comment.js"></script>
 {% endblock %}

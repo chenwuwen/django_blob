@@ -22,6 +22,7 @@ urlpatterns = [
     path('read_blog/<int:blog_id>', blog.ReadBlog.as_view()),
     path('write_blog/', blog.WriteBlog.as_view()),
     path('commitComment/', comment.commitComment.as_view()),
+    path('getComment/<int:blog_id>', comment.getComment.as_view()),
     path('add_read_count/<int:blog_id>', blog_extend.addReadCount.as_view()),
     path('add_favor_count/<int:blog_id>', blog_extend.addFavorCount.as_view()),
 

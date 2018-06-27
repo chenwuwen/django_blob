@@ -67,8 +67,9 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             # return redirect("/blog/index/")
             response = BaseResponse()
             response.status = True
-            # 通过dumps()方法中的cls函数,添加自定义的处理函数
-            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
+            # 通过dumps()方法中的cls函数,添加自定义的处理函数,其中 ensure_ascii参数表示序列化时对中文使用哪种编码，默认为True使用ascii编码,而通用的基本使用unicode编码，所以此项设置为False,以避免中文序列化的显示问题
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder, ensure_ascii=False),
+                                content_type="application/json")
         else:
             # form.errors: 获取错误信息,表单的错误以字典形式返回(如果有多个错误, 可以循环这个字典, 然后传给前端)
             print(result)
@@ -77,7 +78,8 @@ class Login(View):  # 这里需要注意，使用CBV必须继承View类
             # return render(request, "login.html", {'err': result})
             response = BaseResponse()
             response.message = result.errors.as_json()
-            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder, ensure_ascii=False),
+                                content_type="application/json")
 
 
 # 注册（返回统一为json，提示注册成功，重新登录）
@@ -92,14 +94,14 @@ class Register(View):
         response = BaseResponse()
         if ret:
             response.status = True
-            return HttpResponse(json.dumps(response.__dict__), content_type="application/json")
+            return HttpResponse(json.dumps(response.__dict__, ensure_ascii=False), content_type="application/json")
         else:
             # 错误返回json
             print(result.errors)
             error = result.errors.as_json()
             # error = result.errors.as_data()
             response.message = result.errors.as_json()
-            return HttpResponse(json.dumps(response.__dict__), content_type="application/json")
+            return HttpResponse(json.dumps(response.__dict__, ensure_ascii=False), content_type="application/json")
 
 
 # 验证用户名
@@ -111,10 +113,12 @@ def valid_username(request):
         response = BaseResponse()
         if not users.exists():
             response.status = True
-            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder, ensure_ascii=False),
+                                content_type="application/json")
         else:
             response.summary = '用户名已存在'
-            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type="application/json")
+            return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder, ensure_ascii=False),
+                                content_type="application/json")
 
 
 # 校验邮箱
@@ -125,7 +129,8 @@ def valid_email(request):
             pass
         else:
             BaseResponse.summary = '邮箱已存在'
-            return HttpResponse(json.dumps(BaseResponse, cls=JsonCustomEncoder), content_type="application/json")
+            return HttpResponse(json.dumps(BaseResponse, cls=JsonCustomEncoder, ensure_ascii=False),
+                                content_type="application/json")
 
 
 # 注销
