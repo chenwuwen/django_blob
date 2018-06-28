@@ -1,6 +1,8 @@
 import json
 
 import time
+
+from django.db.models import F
 from django.http import HttpResponse
 from django.views import View
 
@@ -26,6 +28,11 @@ class commitComment(View):
             result.cleaned_data['commentBlog'] = blog
             result.cleaned_data['commentUser'] = user
             BlogComment.objects.create(**result.cleaned_data)
+            if not result.cleaned_data['reply']:
+                # 此处不能使用update,这也说明了为什么在使用update的时候,前面必须使用filter而不能使用get了,总结说从使用情境上看，update更加适用于批量数据更新，而save则更适合当然也只适合做单条记录的数据更新操作了,当然从SQL的执行情况来看,使用upate是要优于save方式的
+                # blog.update(commentTotal=F('commentTotal') + 1)
+                blog.commentTotal = blog.commentTotal + 1
+                blog.save()
             response.status = True
             return HttpResponse(json.dumps(response.__dict__, cls=JsonCustomEncoder), content_type='application/json')
         else:
