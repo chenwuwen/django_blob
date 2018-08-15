@@ -170,7 +170,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 # 项目部署时需要配置该项 https://blog.csdn.net/jj546630576/article/details/78606531
-# STATIC_ROOT=''
+STATIC_ROOT = '/root/django_blog/templates'
 
 LOGIN_URL = '/user/login'
 

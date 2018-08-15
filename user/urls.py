@@ -19,6 +19,7 @@ from common import common_view
 from user.views import login
 
 urlpatterns = [
+    path('', login.Login.as_view(), name='login'),  # 只输入IP和端口时跳转到登录页
     path('login/', login.Login.as_view(), name='login'),
     path('logout/', login.logout, name='logout'),
     path('register/', login.Register.as_view(), name='register'),

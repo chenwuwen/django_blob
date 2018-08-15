@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-
 '''
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +24,7 @@ urlpatterns = [
 '''
 
 urlpatterns = [
+    path('', include('user.urls')),  # 只输入IP和端口时跳转到登录页
     path('admin/', admin.site.urls),
     path('user/', include('user.urls')),
     path('blog/', include('blog.urls')),
