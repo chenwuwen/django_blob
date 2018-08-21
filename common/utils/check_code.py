@@ -38,7 +38,7 @@ def create_validate_code(size=(67, 23),
     @param bg_color: 背景颜色，默认为白色
     @param fg_color: 前景色，验证码字符颜色，默认为蓝色#0000FF
     @param font_size: 验证码字体大小
-    @param font_type: 验证码字体，默认为 ae_AlArabiya.ttf
+    @param font_type: 验证码字体[需要注意的是将来部署到Linux上时需要保证服务器上也存在该字体]，默认为 ae_AlArabiya.ttf
     @param length: 验证码字符个数
     @param draw_lines: 是否划干扰线
     @param n_lines: 干扰线的条数范围，格式元组，默认为(1, 2)，只有draw_lines为True时有效

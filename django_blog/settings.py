@@ -24,9 +24,11 @@ SECRET_KEY = '-nyyo&i48=9h4lue^+d4v_i&gbe906#@ho3n$(uf9(2veh2i(q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# 这个参数的设置是为了限制一些主机的访问的,当DEBUG=False的时候,这个值是必须要设定的,否则,启动会报错,其值是一个列表,可以是ip地址,也可以是域名还可以支持通配符,如['example.com','192.168.1.2',‘*.example.com’],如果不想有人访问不了可以直接使用['*'],所有都可以访问
+# https://blog.csdn.net/heatdeath/article/details/71076333
+ALLOWED_HOSTS = ['*']
 
-# Application definition
+# Application definition,需要注意最后一个模块也需要加 逗号 否则部署可能会出现最后一个模块找不到的情况
 
 INSTALLED_APPS = [
     'django.contrib.admin',  # 管理站点
@@ -37,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # 管理静态文件的框架
     'common',
     'user',
-    'blog'
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -169,11 +171,14 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-# 项目部署时需要配置该项 https://blog.csdn.net/jj546630576/article/details/78606531
-STATIC_ROOT = '/root/django_blog/templates'
 
 LOGIN_URL = '/user/login'
 
 STATICFILES_DIRS = (
     (os.path.join(BASE_DIR, 'static/')),
 )
+
+# 项目部署时需要配置该项 代码上传到服务器后需要先运行命令 python manage.py collectstatic 此时就可以将项目中【它会把app下的static目录，
+# 项目根目录下的static目录，还有STATICFILES_DIRS下的静态文件保存起来】收集到STATIC_ROOT中
+# https://blog.csdn.net/jj546630576/article/details/78606531
+STATIC_ROOT = '/root/django_blog/web'
