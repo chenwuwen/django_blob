@@ -11,7 +11,7 @@
     <title>Blog example - Plane UI</title>
 
     <link rel="icon" type="image/png" href="../favicon.png"/>
-    <link rel="stylesheet" type="text/css" href="/static/planeui/css/planeui.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}planeui/css/planeui.css"/>
     {% block css %}{% endblock %}
 
 
@@ -21,10 +21,10 @@
 
 {% endblock %}
 
-<script type="text/javascript" src="/static/jquery/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="/static/planeui/js/planeui.js"></script>
-<script type="text/javascript" src="/static/jquery/jquery.cookie.js"></script>
-<script type="text/javascript" src="/static/layer/layer.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}planeui/js/planeui.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.cookie.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}layer/layer.js"></script>
 {% block js %}{% endblock %}
 </body>
 

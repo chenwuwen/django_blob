@@ -39,7 +39,7 @@
 </div>
 
 {% block js %}
-    <script type="text/javascript" src="/static/jquery/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery-2.1.1.min.js"></script>
     <script type="text/javascript">blog_id ={{ blog.id }};</script>
-    <script type="text/javascript" src="/static/assets/js/comment.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}assets/js/comment.js"></script>
 {% endblock %}

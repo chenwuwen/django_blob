@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',  # 用于内容类型的框架
     'django.contrib.sessions',  # 会话框架
     'django.contrib.messages',  # 消息框架
-    'django.contrib.staticfiles',  # 管理静态文件的框架
+    # 加入配置在Template模版文件中可以设置{{ STATIC_URL }} 作为静态资源文件路径前缀,另一项配置在TEMPLATES中
+    'django.contrib.staticfiles',
     'common',
     'user',
     'blog',
@@ -65,6 +66,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 加入配置在Template模版文件中可以设置{{ STATIC_URL }} 作为静态资源文件路径前缀,另一项配置在INSTALLED_APPS中
+                'django.template.context_processors.static',
+
             ],
         },
 
@@ -166,19 +170,25 @@ USE_L10N = True
 
 USE_TZ = False
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-STATIC_URL = '/static/'
-
-
 LOGIN_URL = '/user/login'
 
+# 一般用来设置通用的静态资源，对应的目录不放在APP下，而是放在Project下
 STATICFILES_DIRS = (
     (os.path.join(BASE_DIR, 'static/')),
 )
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.0/howto/static-files/
+STATIC_URL = '/static/'
+
 # 项目部署时需要配置该项 代码上传到服务器后需要先运行命令 python manage.py collectstatic 此时就可以将项目中【它会把app下的static目录，
-# 项目根目录下的static目录，还有STATICFILES_DIRS下的静态文件保存起来】收集到STATIC_ROOT中
+# 项目根目录下的static目录，还有STATICFILES_DIRS下的静态文件保存起来】收集到STATIC_ROOT中,使用 join做组合路径时,后面的路径不要加 / 否则路径为根目录
 # https://blog.csdn.net/jj546630576/article/details/78606531
-STATIC_ROOT = '/root/django_blog/web'
+STATIC_ROOT = os.path.join(BASE_DIR, 'web')
+
+# 用户上传后的文件,在项目中保存的路径，经常由FileFields字段上传
+MEDIA_ROOT = ''
+
+# 通过URL来访问这个本地地址的URL
+# https://blog.csdn.net/geerniya/article/details/78958243
+MEDIA_URL = ''

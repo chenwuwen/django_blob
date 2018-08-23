@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="/static/assets/css/blog_view.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}assets/css/blog_view.css"/>
 {% endblock %}
 
 {% block main %}
@@ -107,7 +107,7 @@
     </div>
 {% endblock %}
 {% block js %}
-    <script type="text/javascript" src="/static/wangEditor-3.1.1/release/wangEditor.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}wangEditor-3.1.1/release/wangEditor.js"></script>
     <script type="text/javascript">
         {#        监听回车事件,禁止表单回车自动提交,点击回车时,改变为换行符#}
         $(document).keyup(function (event) {
