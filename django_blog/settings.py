@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'common',
     'user',
     'blog',
+    'remote'
 ]
 
 MIDDLEWARE = [

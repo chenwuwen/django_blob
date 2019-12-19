@@ -28,7 +28,6 @@ def test(request):
 # 登录
 class Login(View):  # 这里需要注意，使用CBV必须继承View类
 
-
     def dispatch(self, request, *args, **kwargs):
         # 调用父类中的dispatch
         print('before')  # 类似装饰器的功能,这个地方更像java servlet过滤器,但并不是,Django中的中间件更像是
